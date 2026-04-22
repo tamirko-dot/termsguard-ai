@@ -1,7 +1,7 @@
 async function getApiBaseUrl() {
   return new Promise((resolve) => {
     chrome.storage.local.get("apiBaseUrl", (data) => {
-      resolve(data.apiBaseUrl || "http://localhost:8000");
+      resolve(data.apiBaseUrl || "https://backend-production-1d50.up.railway.app");
     });
   });
 }
