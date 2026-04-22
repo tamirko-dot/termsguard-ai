@@ -1,0 +1,12 @@
+{
+  "name": "termsguard-extension",
+  "version": "0.1.0",
+  "description": "TermsGuard AI Chrome/Edge extension",
+  "scripts": {
+    "lint": "eslint src/",
+    "package": "zip -r termsguard-extension.zip manifest.json src/ icons/"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
