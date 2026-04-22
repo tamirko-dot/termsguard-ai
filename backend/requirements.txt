@@ -1,0 +1,20 @@
+# --- Web / API ---
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# --- Agents / LLMs ---
+crewai==0.80.0
+crewai-tools==0.14.0
+langchain==0.3.7
+langchain-openai==0.2.5
+langchain-anthropic==0.2.4
+langchain-core==0.3.15
+
+# --- Vector DB ---
+supabase==2.9.0
+
+# --- Embeddings / OpenAI ---
+openai==1.51.0
