@@ -1,0 +1,92 @@
+[
+  {
+    "id": "case_001",
+    "title": "High-risk data broker ToS",
+    "input": {
+      "raw_text": "We may sell, rent, or otherwise transfer your personal information, including your name, email address, browsing history, and location data, to third-party advertisers and data brokers at our sole discretion. By using this service you waive your right to participate in any class action lawsuit against us. All disputes must be resolved through binding individual arbitration. We reserve the right to modify these terms at any time without notice. Continued use of the service constitutes acceptance of the new terms. We retain your data indefinitely even after account deletion.",
+      "url": "https://evil-corp.example.com/tos",
+      "title": "EvilCorp Terms of Service"
+    },
+    "expected": {
+      "traffic_light": "red",
+      "must_flag": [
+        {
+          "topic": "data selling to third parties",
+          "risk": "red",
+          "keywords": ["sell", "third", "data"]
+        },
+        {
+          "topic": "arbitration clause waiving class action",
+          "risk": "red",
+          "keywords": ["arbitration", "class action"]
+        },
+        {
+          "topic": "data retained after account deletion",
+          "risk": "red",
+          "keywords": ["retain", "data", "deletion"]
+        }
+      ]
+    }
+  },
+  {
+    "id": "case_002",
+    "title": "Medium-risk analytics-heavy ToS",
+    "input": {
+      "raw_text": "We collect cookies and similar tracking technologies to analyze your usage patterns and improve our service. This data may be shared with analytics partners such as Google Analytics and Mixpanel. We may use your email address to send you promotional communications; you can opt out at any time. We store your data for up to 3 years after your last login. We may update these terms with 30 days notice sent to your registered email. You can request deletion of your account data by contacting support.",
+      "url": "https://medium-risk.example.com/privacy",
+      "title": "MediumRisk App Privacy Policy"
+    },
+    "expected": {
+      "traffic_light": "yellow",
+      "must_flag": [
+        {
+          "topic": "cookie and tracking technologies",
+          "risk": "yellow",
+          "keywords": ["cookie", "tracking"]
+        },
+        {
+          "topic": "sharing data with analytics partners",
+          "risk": "yellow",
+          "keywords": ["analytics", "partner", "shar"]
+        }
+      ]
+    }
+  },
+  {
+    "id": "case_003",
+    "title": "Low-risk privacy-friendly policy",
+    "input": {
+      "raw_text": "We collect only the minimum data necessary to provide our service: your email address and username. We do not sell, rent, or share your personal data with any third parties. We use industry-standard encryption (AES-256) to protect your data at rest and in transit. You can export or permanently delete all your data at any time from your account settings. We will notify you at least 60 days in advance of any changes to this policy. We retain your data only for the duration of your account and delete it within 30 days of account closure.",
+      "url": "https://privacy-first.example.com/privacy",
+      "title": "PrivacyFirst App Privacy Policy"
+    },
+    "expected": {
+      "traffic_light": "green",
+      "must_flag": []
+    }
+  },
+  {
+    "id": "case_004",
+    "title": "Mixed-risk ToS with unilateral change clause",
+    "input": {
+      "raw_text": "We collect your IP address, device identifiers, and usage data to improve our services. Your content may be used to train our AI models; you can opt out by contacting support. We will not sell your personal data to third parties. We may change these terms at any time without prior notice; your continued use indicates agreement. Disputes are subject to the laws of the State of Delaware. We implement reasonable security measures to protect your information.",
+      "url": "https://ai-startup.example.com/tos",
+      "title": "AI Startup Terms of Service"
+    },
+    "expected": {
+      "traffic_light": "yellow",
+      "must_flag": [
+        {
+          "topic": "content used to train AI models",
+          "risk": "yellow",
+          "keywords": ["train", "AI", "model", "content"]
+        },
+        {
+          "topic": "unilateral terms change without notice",
+          "risk": "red",
+          "keywords": ["change", "without", "notice"]
+        }
+      ]
+    }
+  }
+]
