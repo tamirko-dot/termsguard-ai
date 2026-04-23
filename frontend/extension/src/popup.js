@@ -73,10 +73,11 @@ function renderReport(report, tabId) {
   });
 
   sorted.forEach((finding) => {
-    const card = document.createElement("div");
+    const card = document.createElement("button");
     card.className = `finding ${finding.risk}`;
+    card.title = "Click to highlight in page";
     card.innerHTML = `
-      <div class="finding-title">${RISK_ICONS[finding.risk]} ${finding.title}</div>
+      <div class="finding-title">${RISK_ICONS[finding.risk]} ${finding.title} <span class="find-icon">🔍</span></div>
       <div class="finding-explanation">${finding.explanation}</div>
     `;
     card.addEventListener("click", () => {
