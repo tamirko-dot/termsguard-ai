@@ -2,13 +2,25 @@ from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 RED_KEYWORDS = [
-    "arbitration", "waive", "class action", "irrevocable", "perpetual license",
-    "sell your data", "third party advertising", "no refund", "auto-renew",
-    "unilateral change", "without notice",
+    "arbitration", "waive", "class action", "irrevocable perpetual",
+    "sell your data", "sell your personal", "rent your data",
+    "transfer your personal information",
+    "third party advertising", "no refund",
+    "auto-renew", "automatically renew",
+    "unilateral change", "without notice", "without prior notice",
+    "at any time without", "at our sole discretion",
+    "terminate your account at any time",
+    "retain your data indefinitely", "retain indefinitely",
+    "after account deletion",
 ]
 YELLOW_KEYWORDS = [
     "may share", "affiliated companies", "analytics", "cookies", "opt-out",
-    "retain", "anonymized", "aggregated", "license to use",
+    "anonymized", "aggregated", "license to use",
+    "train our ai", "train ai", "ai model", "machine learning model",
+    "used to train", "improve our model",
+    "targeted advertising", "personalised advertising", "personalized advertising",
+    "data broker", "third-party advertisers",
+    "retain your data for", "store your data for",
 ]
 
 

@@ -40,7 +40,11 @@ def build_analyze_task(agent: Agent, extract_task: Task) -> Task:
             "  - Do NOT invent risks. Every finding must be grounded in an actual clause.\n"
             "  - If a document is genuinely user-protective with no RED or YELLOW clauses, "
             "produce zero findings or only GREEN findings.\n"
-            "  - Drop standard boilerplate (contact info, definitions sections) unless they hide a real risk.\n\n"
+            "  - Drop standard boilerplate (contact info, definitions sections) unless they hide a real risk.\n"
+            "  - 'We retain your data only for account duration and delete within 30 days of closure' "
+            "is GREEN — do NOT flag it as a risk.\n"
+            "  - 'We may change these terms at any time without prior notice' is RED — always flag it.\n"
+            "  - 'Content used to train AI models' is YELLOW — always flag it.\n\n"
             "Output ONLY a JSON array of findings. No prose.\n"
             "Each finding: { clause_id, topic, risk, rationale, source_quote, char_start, char_end, retrieved_refs }"
         ),
