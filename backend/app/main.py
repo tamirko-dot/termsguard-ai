@@ -14,7 +14,7 @@ logging.basicConfig(level=settings.log_level.upper())
 app = FastAPI(
     title="TermsGuard AI",
     description="Multi-agent RAG system for analyzing Terms of Service and Privacy Policies.",
-    version="0.1.0",
+    version="0.1.1",
 )
 
 app.add_middleware(
