@@ -2,25 +2,37 @@ from crewai.tools import BaseTool
 from pydantic import BaseModel, Field
 
 RED_KEYWORDS = [
+    # Waiving legal rights
     "arbitration", "waive", "class action", "irrevocable perpetual",
+    # Selling / renting user data
     "sell your data", "sell your personal", "rent your data",
-    "transfer your personal information",
-    "third party advertising", "no refund",
-    "auto-renew", "automatically renew",
-    "unilateral change", "without notice", "without prior notice",
-    "at any time without", "at our sole discretion",
-    "terminate your account at any time",
+    # No refunds
+    "no refund",
+    # Changing terms with zero notice
+    "without prior notice", "without notice",
+    # Keeping data forever / after deletion
     "retain your data indefinitely", "retain indefinitely",
     "after account deletion",
 ]
 YELLOW_KEYWORDS = [
-    "may share", "affiliated companies", "analytics", "cookies", "opt-out",
-    "anonymized", "aggregated", "license to use",
+    # Sharing data with partners
+    "may share", "affiliated companies", "third-party advertisers",
+    "third party advertising", "data broker",
+    # Behavioural advertising
+    "targeted advertising", "personalised advertising", "personalized advertising",
+    # AI training
     "train our ai", "train ai", "ai model", "machine learning model",
     "used to train", "improve our model",
-    "targeted advertising", "personalised advertising", "personalized advertising",
-    "data broker", "third-party advertisers",
+    # Broad content licensing
+    "license to use",
+    # Billing / subscription
+    "auto-renew", "automatically renew",
+    # Broad discretion / termination without cause
+    "at our sole discretion", "terminate your account at any time",
+    # Long data retention
     "retain your data for", "store your data for",
+    # Opt-out required (default-on)
+    "opt-out",
 ]
 
 

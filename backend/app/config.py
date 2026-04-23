@@ -1,3 +1,4 @@
+import json
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -21,8 +22,16 @@ class Settings(BaseSettings):
     supabase_url: str
     supabase_service_role_key: str
 
-    # App
-    cors_origins: list[str] = ["http://localhost:8501"]
+    # App — stored as plain string to avoid pydantic-settings JSON-parsing on empty values
+    cors_origins: str = "http://localhost:8501"
+
+    def cors_origins_list(self) -> list[str]:
+        v = self.cors_origins.strip()
+        if not v:
+            return ["http://localhost:8501"]
+        if v.startswith("["):
+            return json.loads(v)
+        return [o.strip() for o in v.split(",") if o.strip()]
 
     # Model names
     primary_llm: str = "gpt-4o"

@@ -88,5 +88,31 @@
         }
       ]
     }
+  },
+  {
+    "id": "case_005",
+    "title": "Cookies-only analytics policy — should be GREEN",
+    "input": {
+      "raw_text": "We use cookies and similar technologies to operate our website and improve your experience. These cookies help us understand how you navigate our site so we can make it better. We do not sell your data to any third parties. You can control cookie settings through your browser at any time. We use Google Analytics to understand aggregate usage patterns — this data is anonymized and cannot identify you personally. We store your data only for as long as your account is active and delete it within 30 days of account closure.",
+      "url": "https://cookies-only.example.com/privacy",
+      "title": "Simple Analytics Privacy Policy"
+    },
+    "expected": {
+      "traffic_light": "green",
+      "must_flag": []
+    }
+  },
+  {
+    "id": "case_006",
+    "title": "30-day notice change clause — should be GREEN",
+    "input": {
+      "raw_text": "We may update these Terms of Service from time to time. We will notify you of any significant changes by email and by posting a notice on our website at least 30 days before the changes take effect. Your continued use of the service after the effective date constitutes your acceptance of the updated terms. We collect your name and email address to provide the service. We do not share your personal information with third parties except as required by law. You can request deletion of your account and all associated data at any time.",
+      "url": "https://fair-notice.example.com/terms",
+      "title": "Fair Notice Terms of Service"
+    },
+    "expected": {
+      "traffic_light": "green",
+      "must_flag": []
+    }
   }
 ]
