@@ -51,6 +51,7 @@ header {
 .finding.green  { border-color: #38a169; background: #f0fff4; }
 
 .finding-title { font-weight: 600; font-size: 0.9rem; }
+.finding::after { content: " 🔍"; float: right; opacity: 0.4; font-size: 0.75rem; margin-top: 2px; }
 .finding-explanation { font-size: 0.8rem; color: #718096; margin-top: 4px; }
 
 #analyze-btn {
