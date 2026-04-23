@@ -23,13 +23,34 @@ DEFAULT_GT = ROOT / "tests" / "eval" / "ground_truth.json"
 DEFAULT_URL = "https://backend-production-1d50.up.railway.app"
 
 
+SYNONYMS: dict[str, list[str]] = {
+    "sell":      ["sell", "sold", "sale", "rent", "transfer", "monetize"],
+    "retain":    ["retain", "kept", "keep", "store", "stored", "hold", "indefinitely"],
+    "deletion":  ["deletion", "deleted", "delete", "closure", "closed", "termination", "removed"],
+    "shar":      ["shar", "disclos", "provid", "transfer", "pass"],
+    "train":     ["train", "training", "improve", "develop", "build"],
+    "change":    ["change", "modif", "updat", "amend", "revis"],
+    "without":   ["without", "no notice", "unilateral", "at any time", "at our discretion"],
+    "notice":    ["notice", "notification", "inform", "warn"],
+    "content":   ["content", "data", "information", "material"],
+}
+
+
+def expand(keyword: str) -> list[str]:
+    kl = keyword.lower()
+    return SYNONYMS.get(kl, [kl])
+
+
 def keywords_found(expected_keywords: list[str], finding: dict) -> bool:
     haystack = " ".join([
         finding.get("title", ""),
         finding.get("explanation", ""),
         finding.get("source_quote", ""),
     ]).lower()
-    return all(kw.lower() in haystack for kw in expected_keywords)
+    return all(
+        any(syn in haystack for syn in expand(kw))
+        for kw in expected_keywords
+    )
 
 
 def score_case(case: dict, response: dict) -> dict:

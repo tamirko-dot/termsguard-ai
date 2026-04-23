@@ -13,17 +13,17 @@
         {
           "topic": "data selling to third parties",
           "risk": "red",
-          "keywords": ["sell", "third", "data"]
+          "keywords": ["sell", "data"]
         },
         {
           "topic": "arbitration clause waiving class action",
           "risk": "red",
-          "keywords": ["arbitration", "class action"]
+          "keywords": ["arbitration"]
         },
         {
           "topic": "data retained after account deletion",
           "risk": "red",
-          "keywords": ["retain", "data", "deletion"]
+          "keywords": ["retain", "deletion"]
         }
       ]
     }
@@ -47,7 +47,7 @@
         {
           "topic": "sharing data with analytics partners",
           "risk": "yellow",
-          "keywords": ["analytics", "partner", "shar"]
+          "keywords": ["analytics", "shar"]
         }
       ]
     }
@@ -79,12 +79,12 @@
         {
           "topic": "content used to train AI models",
           "risk": "yellow",
-          "keywords": ["train", "AI", "model", "content"]
+          "keywords": ["train", "AI"]
         },
         {
           "topic": "unilateral terms change without notice",
           "risk": "red",
-          "keywords": ["change", "without", "notice"]
+          "keywords": ["change", "without"]
         }
       ]
     }

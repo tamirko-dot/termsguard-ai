@@ -6,7 +6,10 @@ def build_communicate_task(agent: Agent, analyze_task: Task, doc_meta: dict) -> 
         description=(
             "You will receive a JSON array of AnalystFindings.\n\n"
             "Produce a final Report JSON object:\n"
-            "  1. traffic_light: the worst severity across all findings (red > yellow > green).\n"
+            "  1. traffic_light: computed as follows:\n"
+            "       - 'red'    if ANY finding has risk 'red'\n"
+            "       - 'yellow' if NO red findings but ANY finding has risk 'yellow'\n"
+            "       - 'green'  if ALL findings are green OR there are zero findings\n"
             "  2. summary: one short paragraph in plain English describing the overall risk.\n"
             "  3. findings: array where each item has:\n"
             "       - title: one-line plain-English title\n"
