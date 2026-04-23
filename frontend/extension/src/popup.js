@@ -56,7 +56,14 @@ analyzeBtn.addEventListener("click", async () => {
 
 clearBtn.addEventListener("click", async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  chrome.tabs.sendMessage(tab.id, { type: "CLEAR_HIGHLIGHTS" });
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: () => {
+      document.querySelectorAll(".termsguard-highlight").forEach((el) => {
+        el.replaceWith(...el.childNodes);
+      });
+    },
+  });
 });
 
 function renderReport(report, tabId) {
@@ -80,11 +87,39 @@ function renderReport(report, tabId) {
       <div class="finding-title">${RISK_ICONS[finding.risk]} ${finding.title} <span class="find-icon">🔍</span></div>
       <div class="finding-explanation">${finding.explanation}</div>
     `;
-    card.addEventListener("click", () => {
-      chrome.tabs.sendMessage(tabId, {
-        type: "HIGHLIGHT_FINDING",
-        sourceQuote: finding.source_quote,
-        risk: finding.risk,
+    card.addEventListener("click", async () => {
+      const COLORS = { red: "#fed7d7", yellow: "#fefcbf", green: "#c6f6d5" };
+      const color = COLORS[finding.risk] || "#e2e8f0";
+      const quote = finding.source_quote;
+      await chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        func: (sourceQuote, bgColor) => {
+          const candidates = [
+            sourceQuote,
+            sourceQuote.slice(0, 120).trim(),
+            sourceQuote.slice(0, 80).trim(),
+            sourceQuote.slice(0, 50).trim(),
+          ];
+          for (const text of candidates) {
+            if (text.length < 15) break;
+            if (!window.find(text, false, false, true, false, false, false)) continue;
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount) continue;
+            const range = sel.getRangeAt(0);
+            try {
+              const mark = document.createElement("mark");
+              mark.className = "termsguard-highlight";
+              mark.style.cssText = `background:${bgColor}; border-radius:3px; padding:1px 3px; color:inherit; outline:2px solid rgba(0,0,0,0.15);`;
+              range.surroundContents(mark);
+              mark.scrollIntoView({ behavior: "smooth", block: "center" });
+            } catch {
+              range.startContainer.parentElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            sel.removeAllRanges();
+            return;
+          }
+        },
+        args: [quote, color],
       });
     });
     findingsEl.appendChild(card);
