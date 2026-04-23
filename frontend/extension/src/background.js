@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE_URL = "http://localhost:8000";
+const DEFAULT_API_BASE_URL = "https://backend-production-1d50.up.railway.app";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.get("apiBaseUrl", (data) => {
