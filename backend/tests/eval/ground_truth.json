@@ -74,7 +74,7 @@
       "title": "AI Startup Terms of Service"
     },
     "expected": {
-      "traffic_light": "yellow",
+      "traffic_light": "red",
       "must_flag": [
         {
           "topic": "content used to train AI models",
