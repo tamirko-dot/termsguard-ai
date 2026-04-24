@@ -8,16 +8,28 @@ async function getApiBaseUrl() {
 
 export async function analyzeText(rawText, url = null, title = null) {
   const baseUrl = await getApiBaseUrl();
-  const response = await fetch(`${baseUrl}/api/v1/analyze`, {
+
+  const submitRes = await fetch(`${baseUrl}/api/v1/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ raw_text: rawText, url, title }),
   });
 
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`API error ${response.status}: ${err}`);
+  if (!submitRes.ok) {
+    const err = await submitRes.text();
+    throw new Error(`API error ${submitRes.status}: ${err}`);
   }
 
-  return response.json();
+  const { job_id } = await submitRes.json();
+
+  while (true) {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const pollRes = await fetch(`${baseUrl}/api/v1/analyze/${job_id}`);
+    if (!pollRes.ok) throw new Error(`Poll error ${pollRes.status}`);
+
+    const job = await pollRes.json();
+    if (job.status === "done") return job.result;
+    if (job.status === "error") throw new Error(job.error || "Analysis failed");
+  }
 }
