@@ -12,7 +12,7 @@ def build_extract_task(agent: Agent, raw_text: str) -> Task:
             f"  - char_start: integer index where the clause starts in the original text\n"
             f"  - char_end: integer index where it ends\n\n"
             f"Output ONLY the JSON array. No prose before or after.\n\n"
-            f"Document (first 15000 chars shown):\n{raw_text[:15000]}"
+            f"Document (first 8000 chars shown):\n{raw_text[:8000]}"
         ),
         expected_output=(
             "A JSON array of clause objects with fields: "

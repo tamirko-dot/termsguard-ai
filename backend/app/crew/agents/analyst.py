@@ -2,7 +2,7 @@ from crewai import Agent
 
 from app.crew.tools.clause_classifier_tool import ClauseClassifierTool
 from app.crew.tools.rag_search_tool import RagSearchTool
-from app.services.llm_provider import get_fast_llm
+from app.services.llm_provider import get_primary_llm
 
 
 def build_analyst() -> Agent:
@@ -18,7 +18,7 @@ def build_analyst() -> Agent:
             "You never invent findings — every risk assessment must be grounded in a retrieved "
             "KB reference or an explicit clause match. You are concise and precise."
         ),
-        llm=get_fast_llm(),
+        llm=get_primary_llm(),
         tools=[RagSearchTool(), ClauseClassifierTool()],
         verbose=True,
         allow_delegation=False,
