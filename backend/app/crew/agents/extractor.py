@@ -1,6 +1,6 @@
 from crewai import Agent
 
-from app.services.llm_provider import get_primary_llm
+from app.services.llm_provider import get_fast_llm
 
 
 def build_extractor() -> Agent:
@@ -17,7 +17,7 @@ def build_extractor() -> Agent:
             "so that downstream agents and the browser extension can highlight the "
             "exact source text. You split on paragraph breaks and numbered sections."
         ),
-        llm=get_primary_llm(),
+        llm=get_fast_llm(),
         verbose=True,
         allow_delegation=False,
     )

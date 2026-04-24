@@ -14,6 +14,14 @@
   <div id="main">
     <button id="analyze-btn">Analyze This Page</button>
     <div id="status"></div>
+    <div id="loading" style="display:none;">
+      <div class="spinner-ring"></div>
+      <div class="loading-steps">
+        <div class="step pending" id="step-extract">Extracting clauses</div>
+        <div class="step pending" id="step-analyze">Analyzing risks</div>
+        <div class="step pending" id="step-report">Preparing report</div>
+      </div>
+    </div>
     <div id="result" style="display:none;">
       <div id="traffic-light" class="traffic-light"></div>
       <div id="summary"></div>

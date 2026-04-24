@@ -40,11 +40,6 @@
       "traffic_light": "yellow",
       "must_flag": [
         {
-          "topic": "cookie and tracking technologies",
-          "risk": "yellow",
-          "keywords": ["cookie", "tracking"]
-        },
-        {
           "topic": "sharing data with analytics partners",
           "risk": "yellow",
           "keywords": ["analytics", "shar"]

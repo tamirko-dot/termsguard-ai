@@ -17,6 +17,16 @@ def get_primary_llm() -> ChatOpenAI:
 
 
 @lru_cache
+def get_fast_llm() -> ChatOpenAI:
+    settings = get_settings()
+    return ChatOpenAI(
+        model="gpt-4o-mini",
+        api_key=settings.openai_api_key,
+        temperature=0,
+    )
+
+
+@lru_cache
 def get_fallback_llm() -> ChatAnthropic:
     settings = get_settings()
     return ChatAnthropic(

@@ -2,6 +2,7 @@ import { analyzeText } from "./lib/api_client.js";
 
 const analyzeBtn = document.getElementById("analyze-btn");
 const statusEl = document.getElementById("status");
+const loadingEl = document.getElementById("loading");
 const resultEl = document.getElementById("result");
 const trafficLightEl = document.getElementById("traffic-light");
 const summaryEl = document.getElementById("summary");
@@ -11,6 +12,26 @@ const metaEl = document.getElementById("meta");
 
 const RISK_ICONS = { red: "🔴", yellow: "🟡", green: "🟢" };
 const RISK_LABELS = { red: "HIGH RISK", yellow: "MEDIUM RISK", green: "LOW RISK" };
+
+let stepTimers = [];
+
+function showLoading() {
+  loadingEl.style.display = "block";
+  const s1 = document.getElementById("step-extract");
+  const s2 = document.getElementById("step-analyze");
+  const s3 = document.getElementById("step-report");
+  s1.className = "step active";
+  s2.className = "step pending";
+  s3.className = "step pending";
+  stepTimers.push(setTimeout(() => { s1.className = "step done"; s2.className = "step active"; }, 4000));
+  stepTimers.push(setTimeout(() => { s2.className = "step done"; s3.className = "step active"; }, 11000));
+}
+
+function hideLoading() {
+  loadingEl.style.display = "none";
+  stepTimers.forEach(clearTimeout);
+  stepTimers = [];
+}
 
 analyzeBtn.addEventListener("click", async () => {
   analyzeBtn.disabled = true;
@@ -38,18 +59,19 @@ analyzeBtn.addEventListener("click", async () => {
     return;
   }
 
-  statusEl.textContent = "Analyzing with TermsGuard AI (up to 60s)...";
+  showLoading();
 
   let report;
   try {
     report = await analyzeText(text, url, title);
   } catch (err) {
+    hideLoading();
     statusEl.textContent = `Error: ${err.message}`;
     analyzeBtn.disabled = false;
     return;
   }
 
-  statusEl.textContent = "";
+  hideLoading();
   renderReport(report, tab.id);
   analyzeBtn.disabled = false;
 });

@@ -1,7 +1,6 @@
 from crewai import Agent
 
-from app.crew.tools.plain_language_rewriter_tool import PlainLanguageRewriterTool
-from app.services.llm_provider import get_primary_llm
+from app.services.llm_provider import get_fast_llm
 
 
 def build_communicator() -> Agent:
@@ -17,8 +16,8 @@ def build_communicator() -> Agent:
             "and never use legalese. You never add a finding the Analyst didn't produce, "
             "and you never remove or alter source quotes — the extension's highlighter depends on them."
         ),
-        llm=get_primary_llm(),
-        tools=[PlainLanguageRewriterTool()],
+        llm=get_fast_llm(),
+        tools=[],
         verbose=True,
         allow_delegation=False,
     )
