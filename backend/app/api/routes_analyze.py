@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from fastapi import APIRouter, HTTPException
@@ -22,7 +23,7 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     )
 
     try:
-        report = run_pipeline(document)
+        report = await asyncio.to_thread(run_pipeline, document)
     except Exception as exc:
         logger.exception("Pipeline failed: %s", exc)
         raise HTTPException(status_code=500, detail="Analysis pipeline failed") from exc
