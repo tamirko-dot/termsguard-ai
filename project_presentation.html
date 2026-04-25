@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TermsGuard AI — Project Presentation Report</title>
+<style>
+  /* ── Base ─────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue:    #2b6cb0;
+    --blue-lt: #ebf8ff;
+    --red:     #c53030;
+    --red-lt:  #fff5f5;
+    --yellow:  #b7791f;
+    --yel-lt:  #fffff0;
+    --green:   #276749;
+    --grn-lt:  #f0fff4;
+    --gray:    #4a5568;
+    --border:  #e2e8f0;
+    --bg:      #f7fafc;
+    --card:    #ffffff;
+    --radius:  10px;
+    --shadow:  0 2px 12px rgba(0,0,0,.08);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: #1a202c;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── Layout ───────────────────────────────────────────────────────── */
+  .page-wrap { display: flex; min-height: 100vh; }
+
+  nav {
+    width: 240px;
+    min-width: 240px;
+    background: #1a202c;
+    color: #cbd5e0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 0 40px;
+  }
+  nav .logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 20px 24px;
+    border-bottom: 1px solid #2d3748;
+  }
+  nav .logo .shield { font-size: 26px; }
+  nav .logo-text { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.3; }
+  nav ul { list-style: none; margin-top: 16px; }
+  nav ul li a {
+    display: block;
+    padding: 8px 20px;
+    color: #a0aec0;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: all .18s;
+  }
+  nav ul li a:hover, nav ul li a.active {
+    color: #fff;
+    background: #2d3748;
+    border-left-color: #63b3ed;
+  }
+  nav ul li.section-title {
+    padding: 18px 20px 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #718096;
+  }
+
+  main { flex: 1; padding: 40px 48px; max-width: 960px; }
+
+  /* ── Hero ─────────────────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 48px 48px 40px;
+    margin-bottom: 48px;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 20px;
+    padding: 3px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 38px; font-weight: 800; line-height: 1.15; margin-bottom: 14px; }
+  .hero p { font-size: 17px; opacity: .88; max-width: 600px; }
+  .hero .meta { display: flex; gap: 28px; margin-top: 28px; flex-wrap: wrap; }
+  .hero .meta-item { display: flex; flex-direction: column; }
+  .hero .meta-item .label { font-size: 11px; opacity: .65; letter-spacing: .08em; text-transform: uppercase; }
+  .hero .meta-item .value { font-size: 15px; font-weight: 600; }
+
+  /* ── Sections ─────────────────────────────────────────────────────── */
+  section { margin-bottom: 56px; }
+  section:target { scroll-margin-top: 24px; }
+  h2 {
+    font-size: 22px; font-weight: 700;
+    color: #1a202c;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+  }
+  h2 .icon { margin-right: 8px; }
+  h3 { font-size: 16px; font-weight: 700; color: #2d3748; margin: 20px 0 8px; }
+  p { margin-bottom: 12px; color: var(--gray); }
+
+  /* ── Cards ────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+  .card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #2d3748; }
+  .card p { font-size: 13px; margin: 0; }
+
+  /* ── Chips / Badges ───────────────────────────────────────────────── */
+  .chip {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 2px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px 3px 2px 0;
+  }
+  .chip-blue   { background: #bee3f8; color: #1a365d; }
+  .chip-green  { background: #c6f6d5; color: #1c4532; }
+  .chip-yellow { background: #fefcbf; color: #744210; }
+  .chip-red    { background: #fed7d7; color: #742a2a; }
+  .chip-gray   { background: #edf2f7; color: #2d3748; }
+
+  /* ── Traffic Light ────────────────────────────────────────────────── */
+  .tl-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+  .tl-box {
+    flex: 1; min-width: 160px;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .tl-red    { background: var(--red-lt);  color: var(--red);    border-left: 4px solid var(--red); }
+  .tl-yellow { background: var(--yel-lt);  color: var(--yellow); border-left: 4px solid var(--yellow); }
+  .tl-green  { background: var(--grn-lt);  color: var(--green);  border-left: 4px solid var(--green); }
+
+  /* ── Code ─────────────────────────────────────────────────────────── */
+  pre, code {
+    font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #1a202c;
+    color: #e2e8f0;
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+  code {
+    background: #edf2f7;
+    color: #c53030;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+
+  /* ── Tables ───────────────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  th {
+    background: #2d3748; color: #fff;
+    padding: 10px 14px; text-align: left;
+    font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f7fafc; }
+
+  /* ── Timeline ─────────────────────────────────────────────────────── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: "";
+    position: absolute; left: 10px; top: 0; bottom: 0;
+    width: 2px; background: var(--border);
+  }
+  .tl-item { position: relative; margin-bottom: 28px; }
+  .tl-item::before {
+    content: "";
+    position: absolute; left: -26px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--blue);
+  }
+  .tl-item .tl-date {
+    font-size: 11px; font-weight: 700; color: var(--blue);
+    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 3px;
+  }
+  .tl-item .tl-title { font-size: 15px; font-weight: 700; color: #1a202c; margin-bottom: 4px; }
+  .tl-item .tl-body { font-size: 13.5px; color: var(--gray); }
+
+  /* ── Architecture Diagram ─────────────────────────────────────────── */
+  .arch-diagram {
+    background: #1a202c;
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #a0aec0;
+    white-space: pre;
+    overflow-x: auto;
+    margin: 16px 0;
+    line-height: 1.8;
+  }
+  .arch-diagram .hl-blue   { color: #63b3ed; font-weight: 700; }
+  .arch-diagram .hl-green  { color: #68d391; font-weight: 700; }
+  .arch-diagram .hl-yellow { color: #faf089; font-weight: 700; }
+  .arch-diagram .hl-red    { color: #fc8181; font-weight: 700; }
+
+  /* ── Pipeline Steps ───────────────────────────────────────────────── */
+  .pipeline { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+  .pipe-step {
+    flex: 1; min-width: 120px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 14px 14px 12px;
+    text-align: center;
+    position: relative;
+  }
+  .pipe-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .pipe-step:last-child  { border-radius: 0 var(--radius) var(--radius) 0; }
+  .pipe-step:not(:last-child)::after {
+    content: "→";
+    position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
+    color: var(--blue); font-size: 16px; z-index: 1;
+  }
+  .pipe-step .step-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .pipe-step .step-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--blue); }
+  .pipe-step .step-detail { font-size: 11.5px; color: var(--gray); margin-top: 3px; }
+
+  /* ── Info Box ─────────────────────────────────────────────────────── */
+  .info-box {
+    border-left: 4px solid var(--blue);
+    background: var(--blue-lt);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    color: #1a365d;
+  }
+
+  /* ── Pill list ────────────────────────────────────────────────────── */
+  .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+  /* ── Responsive ───────────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    nav { display: none; }
+    main { padding: 24px 20px; }
+    .hero { padding: 32px 24px; }
+    .hero h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- ════════════════════════════════════════════════════════════════════
+     SIDEBAR NAV
+════════════════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="logo">
+    <span class="shield">🛡️</span>
+    <div class="logo-text">TermsGuard AI<br/><span style="font-weight:400;font-size:11px;opacity:.7">Project Report</span></div>
+  </div>
+  <ul>
+    <li class="section-title">Overview</li>
+    <li><a href="#overview">What Is It?</a></li>
+    <li><a href="#architecture">System Architecture</a></li>
+    <li class="section-title">Backend</li>
+    <li><a href="#backend-api">API &amp; Framework</a></li>
+    <li><a href="#agents">Agents &amp; Crew</a></li>
+    <li><a href="#tools">Tools / Skills</a></li>
+    <li><a href="#rag">RAG System</a></li>
+    <li><a href="#database">Database</a></li>
+    <li><a href="#llm">LLM Providers</a></li>
+    <li class="section-title">Frontend</li>
+    <li><a href="#extension">Chrome Extension</a></li>
+    <li><a href="#streamlit">Streamlit Web UI</a></li>
+    <li class="section-title">Infrastructure</li>
+    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#cicd">CI / CD</a></li>
+    <li class="section-title">Project Story</li>
+    <li><a href="#evolution">Development Evolution</a></li>
+    <li><a href="#status">Current Status</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge">Final Project · AI Development Course 2026</div>
+    <h1>🛡️ TermsGuard AI</h1>
+    <p>An AI-powered browser extension that reads Terms of Service and Privacy Policies so you don't have to — surfacing legal risks in plain English, in under 60 seconds.</p>
+    <div class="meta">
+      <div class="meta-item"><span class="label">Version</span><span class="value">0.1.1</span></div>
+      <div class="meta-item"><span class="label">Backend</span><span class="value">FastAPI + CrewAI</span></div>
+      <div class="meta-item"><span class="label">Database</span><span class="value">Supabase pgvector</span></div>
+      <div class="meta-item"><span class="label">Deployment</span><span class="value">Railway (live)</span></div>
+      <div class="meta-item"><span class="label">Author</span><span class="value">Tamir Kochavi</span></div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── OVERVIEW ──────────────────────── -->
+  <section id="overview">
+    <h2><span class="icon">💡</span>What Is TermsGuard AI?</h2>
+    <p>
+      Every time we click "I Agree" on a Terms of Service or Privacy Policy we hand over rights we never read.
+      TermsGuard AI solves this with a multi-agent RAG pipeline that classifies legal clauses, looks them up
+      against a knowledge base of 100+ real-world ToS documents, and delivers an instant risk report with
+      exact citations back to the original text.
+    </p>
+
+    <div class="tl-row">
+      <div class="tl-box tl-red">🔴 RED — High risk clause detected</div>
+      <div class="tl-box tl-yellow">🟡 YELLOW — Moderate risk, read carefully</div>
+      <div class="tl-box tl-green">🟢 GREEN — Looks standard / user-friendly</div>
+    </div>
+
+    <h3>Core Problem Solved</h3>
+    <p>Average ToS is 7,000 words and takes 30+ minutes to read. Legal language is deliberately opaque.
+       Non-lawyers have no practical way to assess risk. TermsGuard bridges that gap with AI.</p>
+
+    <h3>Key Features</h3>
+    <div class="card-grid">
+      <div class="card"><h4>🔍 Instant Analysis</h4><p>Paste any ToS text and get a full risk report with traffic-light rating in ~10 seconds.</p></div>
+      <div class="card"><h4>📌 In-Page Highlighting</h4><p>Extension highlights the exact clauses in the original page — click a finding, the text lights up.</p></div>
+      <div class="card"><h4>📚 Knowledge Base RAG</h4><p>161 ingested documents including GDPR, CCPA, and ToS from 100+ companies like Google, Discord, OpenAI.</p></div>
+      <div class="card"><h4>🤖 Multi-Agent Design</h4><p>CrewAI orchestration with specialist agents for extraction, analysis, and plain-language communication.</p></div>
+      <div class="card"><h4>🌐 Dual Interface</h4><p>Chrome/Edge browser extension for live pages + Streamlit web UI for manual paste analysis.</p></div>
+      <div class="card"><h4>☁️ Production Deployed</h4><p>Live backend on Railway with GitHub Actions CI/CD pipeline for auto-deploy on push to main.</p></div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────── ARCHITECTURE ──────────────────── -->
+  <section id="architecture">
+    <h2><span class="icon">🏗️</span>System Architecture</h2>
+
+    <div class="arch-diagram"><span class="hl-blue">┌─────────────────────────────────────────────────────────────────────┐
+│                         USER INTERFACES                             │
+│                                                                     │
+│   ┌──────────────────────┐        ┌───────────────────────────┐    │
+│   │  Chrome/Edge Extension│        │   Streamlit Web App       │    │
+│   │  (MV3, popup.js,     │        │   (Python, port 8501)     │    │
+│   │  content.js,         │        │   traffic_light component │    │
+│   │  highlighter.js)     │        │   finding_card component  │    │
+│   └──────────┬───────────┘        └─────────────┬─────────────┘    │
+└──────────────┼──────────────────────────────────┼──────────────────┘
+               │  POST /api/v1/analyze             │
+               ▼                                   ▼
+</span><span class="hl-yellow">┌─────────────────────────────────────────────────────────────────────┐
+│                 FASTAPI BACKEND  (Railway, port 8000)               │
+│                                                                     │
+│   GET /health          POST /api/v1/analyze                        │
+│        │                        │                                   │
+│        │               ┌────────▼────────┐                         │
+│        │               │  Orchestrator   │  run_pipeline()         │
+│        │               │  orchestrator.py│                         │
+│        │               └────────┬────────┘                         │
+│        │                        │                                   │
+│        │         ┌──────────────┼──────────────┐                   │
+│        │         │              │              │                    │
+│        │    ┌────▼────┐  ┌──────▼───┐  ┌──────▼────────┐         │
+│        │    │Extractor│  │ Analyst  │  │ Communicator  │         │
+│        │    │ Agent   │  │  Agent   │  │    Agent      │         │
+│        │    │(gpt-4o- │  │(gpt-4o)  │  │ (gpt-4o-mini) │         │
+│        │    │  mini)  │  │          │  │               │         │
+│        │    └────┬────┘  └──────┬───┘  └───────────────┘         │
+│        │         │              │                                   │
+│        │         │      ┌───────▼────────────┐                    │
+│        │         │      │  TOOLS / SKILLS    │                    │
+│        │         │      │ • RagSearchTool    │                    │
+│        │         │      │ • ClauseClassifier │                    │
+│        │         │      └───────┬────────────┘                    │
+└────────┼─────────┼──────────────┼─────────────────────────────────┘
+         │         │              │
+</span><span class="hl-green">         │         ▼              ▼
+┌────────┼─────────────────────────────────────────────────────────────┐
+│        │            SUPABASE (PostgreSQL + pgvector)                  │
+│        │                                                              │
+│        │   documents table                                            │
+│        │   ┌──────────┬──────────┬───────────┬──────────┬─────────┐ │
+│        │   │   id     │ content  │ embedding │  source  │metadata │ │
+│        │   │  UUID    │  TEXT    │ vector    │  TEXT    │  JSONB  │ │
+│        │   │          │(chunk)   │(1536 dims)│          │         │ │
+│        │   └──────────┴──────────┴───────────┴──────────┴─────────┘ │
+│        │                                                              │
+│        │   match_documents() RPC — pgvector cosine similarity search  │
+└────────┴─────────────────────────────────────────────────────────────┘</span></div>
+
+    <div class="info-box">
+      The pipeline is <strong>single-agent in current production</strong> (orchestrator calls one CrewAI agent for speed),
+      but the full three-agent architecture (Extractor → Analyst → Communicator) is defined and ready.
+      The simplification brought response time from ~45s down to ~8s.
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────── BACKEND API ───────────────────── -->
+  <section id="backend-api">
+    <h2><span class="icon">⚙️</span>Backend — API &amp; Framework</h2>
+
+    <h3>Framework Stack</h3>
+    <div class="pill-list">
+      <span class="chip chip-blue">FastAPI 0.115</span>
+      <span class="chip chip-blue">Uvicorn (ASGI)</span>
+      <span class="chip chip-blue">Pydantic v2</span>
+      <span class="chip chip-blue">Python 3.11</span>
+      <span class="chip chip-gray">pydantic-settings</span>
+      <span class="chip chip-gray">python-dotenv</span>
+    </div>
+
+    <h3>Endpoints</h3>
+    <table>
+      <tr><th>Method</th><th>Path</th><th>Description</th><th>Response</th></tr>
+      <tr><td><code>GET</code></td><td><code>/health</code></td><td>Liveness probe for Railway</td><td><code>{"status":"ok","version":"0.1.1"}</code></td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/v1/analyze</code></td><td>Full ToS analysis pipeline</td><td>JSON report with findings</td></tr>
+    </table>
+
+    <h3>Request / Response Contract</h3>
+    <pre><code>// Request
+POST /api/v1/analyze
+{
+  "raw_text": "string  ← full ToS text (required)",
+  "url":      "string  ← page URL (optional)",
+  "title":    "string  ← page title (optional)"
+}
+
+// Response 200
+{
+  "traffic_light": "red | yellow | green",
+  "summary":       "One-paragraph plain-English summary",
+  "findings": [
+    {
+      "title":        "Data Sold to Third Parties",
+      "explanation":  "Practical impact in 1-2 sentences",
+      "risk":         "red",
+      "source_quote": "Verbatim clause from document",
+      "char_start":   1024,
+      "char_end":     1180
+    }
+  ],
+  "doc_meta": { "url": "...", "length": 12500, "lang": "en" },
+  "processing_ms": 7832
+}
+
+// Errors
+422  →  empty raw_text
+500  →  pipeline failure (returns RED traffic light with error message)</code></pre>
+
+    <h3>Domain Models</h3>
+    <table>
+      <tr><th>Model</th><th>Fields</th><th>Purpose</th></tr>
+      <tr><td><code>Document</code></td><td>raw_text, url, title</td><td>Input wrapper</td></tr>
+      <tr><td><code>DocMeta</code></td><td>url, length, lang</td><td>Metadata in response</td></tr>
+      <tr><td><code>RiskLevel</code></td><td>red / yellow / green</td><td>Enum for risk classification</td></tr>
+      <tr><td><code>Finding</code></td><td>title, explanation, risk, source_quote, char_start, char_end</td><td>Public finding (in response)</td></tr>
+      <tr><td><code>AnalystFinding</code></td><td>+ clause_id, topic, rationale, retrieved_refs</td><td>Internal finding with KB refs</td></tr>
+      <tr><td><code>Report</code></td><td>traffic_light, summary, findings, doc_meta, processing_ms</td><td>Full output</td></tr>
+    </table>
+
+    <h3>Configuration</h3>
+    <p>All secrets managed via <code>.env</code> loaded by <code>pydantic-settings</code>. Key variables:</p>
+    <pre><code>OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+SUPABASE_URL=https://xxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=...
+CORS_ORIGINS=http://localhost:8501,chrome-extension://...
+PRIMARY_LLM=gpt-4o
+FAST_LLM=gpt-4o-mini
+FALLBACK_LLM=claude-sonnet-4-5
+EMBEDDING_MODEL=text-embedding-3-small
+RAG_TOP_K=5</code></pre>
+  </section>
+
+  <!-- ─────────────────────────────── AGENTS ────────────────────────── -->
+  <section id="agents">
+    <h2><span class="icon">🤖</span>Agents &amp; Crew Orchestration</h2>
+
+    <p>The project uses <strong>CrewAI 0.80</strong> for multi-agent orchestration. Each agent has a defined role,
+    backstory, and toolset, allowing the LLM to stay in-character and produce consistent outputs.</p>
+
+    <h3>The Three Agents</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4>📄 Extractor Agent</h4>
+        <p><strong>Role:</strong> Legal Document Structural Extractor<br/>
+        <strong>LLM:</strong> gpt-4o-mini (speed-optimised)<br/>
+        <strong>Purpose:</strong> Parse a ToS/Privacy Policy into discrete clauses with exact character offsets for downstream highlighting.<br/>
+        <span class="chip chip-gray">extractor.py</span></p>
+      </div>
+      <div class="card">
+        <h4>⚖️ Analyst Agent</h4>
+        <p><strong>Role:</strong> Privacy Lawyer &amp; Risk Analyst<br/>
+        <strong>LLM:</strong> gpt-4o (full reasoning)<br/>
+        <strong>Purpose:</strong> Classify each clause as RED / YELLOW / GREEN using legal expertise + RAG knowledge base. This is the core intelligence.<br/>
+        <span class="chip chip-gray">analyst.py</span> <span class="chip chip-red">primary</span></p>
+      </div>
+      <div class="card">
+        <h4>✍️ Communicator Agent</h4>
+        <p><strong>Role:</strong> Plain-English Risk Communicator<br/>
+        <strong>LLM:</strong> gpt-4o-mini<br/>
+        <strong>Purpose:</strong> Transform analyst findings into jargon-free explanations a non-lawyer can understand.<br/>
+        <span class="chip chip-gray">communicator.py</span></p>
+      </div>
+    </div>
+
+    <h3>Orchestration Pipeline</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="step-icon">📥</span><span class="step-label">Input</span><span class="step-detail">raw_text + url</span></div>
+      <div class="pipe-step"><span class="step-icon">📚</span><span class="step-label">RAG Fetch</span><span class="step-detail">Top-4 KB chunks</span></div>
+      <div class="pipe-step"><span class="step-icon">✂️</span><span class="step-label">Truncate</span><span class="step-detail">10,000 chars</span></div>
+      <div class="pipe-step"><span class="step-icon">🤖</span><span class="step-label">Analyst</span><span class="step-detail">CrewAI + prompt</span></div>
+      <div class="pipe-step"><span class="step-icon">🔍</span><span class="step-label">Post-process</span><span class="step-detail">Filter false+</span></div>
+      <div class="pipe-step"><span class="step-icon">📊</span><span class="step-label">Report</span><span class="step-detail">JSON response</span></div>
+    </div>
+
+    <h3>Analyst Prompt Strategy</h3>
+    <p>The agent prompt injects several layers of context:</p>
+    <pre><code>You are an expert privacy lawyer with 20 years GDPR/CCPA experience.
+
+[LEGAL KNOWLEDGE BASE]
+{rag_context}          ← top-4 similar chunks from 161-doc KB
+
+[DOCUMENT TO ANALYZE]
+{truncated_tos_text}   ← up to 10,000 chars
+
+Classification rules:
+  RED    → selling data, arbitration waiver, indefinite retention,
+           perpetual IP licence, unilateral modifications
+  YELLOW → targeted ads, data sharing, AI training, auto-renew,
+           <14 days notice, 2+ year retention
+  GREEN  → explicit no-sell, 60+ day notice, data export rights,
+           delete on request
+
+Output ONE JSON object: { traffic_light, summary, findings[] }</code></pre>
+
+    <h3>Post-Processing Filter</h3>
+    <p>After the agent responds, a deterministic filter removes false positives — findings with phrases like
+    <em>"do not sell"</em>, <em>"permanently delete"</em>, or <em>"60 days notice"</em> are automatically downgraded.
+    This prevents the LLM from flagging user-friendly clauses as risky.</p>
+  </section>
+
+  <!-- ─────────────────────────────── TOOLS ─────────────────────────── -->
+  <section id="tools">
+    <h2><span class="icon">🔧</span>Tools / Skills</h2>
+    <p>Agents are equipped with custom <code>BaseTool</code> subclasses that they can call during reasoning.</p>
+
+    <table>
+      <tr><th>Tool</th><th>File</th><th>Type</th><th>What It Does</th></tr>
+      <tr>
+        <td><strong>RagSearchTool</strong></td>
+        <td><code>rag_search_tool.py</code></td>
+        <td><span class="chip chip-blue">Vector Search</span></td>
+        <td>Embeds a query string, runs pgvector similarity search against Supabase, returns top-k chunks with source and similarity score. Used by Analyst to retrieve relevant legal precedents.</td>
+      </tr>
+      <tr>
+        <td><strong>ClauseClassifierTool</strong></td>
+        <td><code>clause_classifier_tool.py</code></td>
+        <td><span class="chip chip-yellow">Keyword Heuristic</span></td>
+        <td>Fast deterministic pre-filter. Scans clause text for ~20 RED keywords (arbitration, sell data, no refund…) and ~15 YELLOW keywords (targeted ads, AI training…). Signals risk level before the LLM sees the clause — cuts hallucinations and speeds up analysis.</td>
+      </tr>
+      <tr>
+        <td><strong>PlainLanguageRewriterTool</strong></td>
+        <td><code>plain_language_rewriter_tool.py</code></td>
+        <td><span class="chip chip-gray">Stub</span></td>
+        <td>Planned for v0.2 — would transform complex legalese into one-sentence summaries independently of the main prompt.</td>
+      </tr>
+    </table>
+
+    <h3>ClauseClassifier — Keyword Lists</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+      <div class="card" style="border-left:4px solid var(--red)">
+        <h4 style="color:var(--red)">RED Keywords</h4>
+        <div class="pill-list">
+          <span class="chip chip-red">sell your data</span>
+          <span class="chip chip-red">rent your data</span>
+          <span class="chip chip-red">arbitration</span>
+          <span class="chip chip-red">class action waiver</span>
+          <span class="chip chip-red">no refund</span>
+          <span class="chip chip-red">indefinite retention</span>
+          <span class="chip chip-red">perpetual license</span>
+          <span class="chip chip-red">irrevocable</span>
+          <span class="chip chip-red">unilateral modification</span>
+        </div>
+      </div>
+      <div class="card" style="border-left:4px solid var(--yellow)">
+        <h4 style="color:var(--yellow)">YELLOW Keywords</h4>
+        <div class="pill-list">
+          <span class="chip chip-yellow">targeted advertising</span>
+          <span class="chip chip-yellow">share with partners</span>
+          <span class="chip chip-yellow">AI training</span>
+          <span class="chip chip-yellow">auto-renew</span>
+          <span class="chip chip-yellow">discretionary termination</span>
+          <span class="chip chip-yellow">2 years retention</span>
+          <span class="chip chip-yellow">&lt;14 days notice</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────── RAG ───────────────────────────── -->
+  <section id="rag">
+    <h2><span class="icon">📚</span>RAG System</h2>
+    <p>RAG (Retrieval-Augmented Generation) grounds the LLM's analysis in real legal documents instead of just relying on training data. When a new ToS arrives, the system looks up similar clauses from known companies and feeds that context into the analyst prompt.</p>
+
+    <h3>Architecture</h3>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="step-icon">📄</span><span class="step-label">Document</span><span class="step-detail">Raw ToS text</span></div>
+      <div class="pipe-step"><span class="step-icon">✂️</span><span class="step-label">Chunk</span><span class="step-detail">1500 chars / 150 overlap</span></div>
+      <div class="pipe-step"><span class="step-icon">🔢</span><span class="step-label">Embed</span><span class="step-detail">text-embedding-3-small</span></div>
+      <div class="pipe-step"><span class="step-icon">🗄️</span><span class="step-label">Store</span><span class="step-detail">Supabase pgvector</span></div>
+    </div>
+    <div style="text-align:center;font-size:20px;margin:4px 0;">↕ retrieval at query time</div>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="step-icon">❓</span><span class="step-label">Query</span><span class="step-detail">First 400 chars of doc</span></div>
+      <div class="pipe-step"><span class="step-icon">🔢</span><span class="step-label">Embed Query</span><span class="step-detail">Same model</span></div>
+      <div class="pipe-step"><span class="step-icon">🔍</span><span class="step-label">Similarity</span><span class="step-detail">pgvector cosine</span></div>
+      <div class="pipe-step"><span class="step-icon">📋</span><span class="step-label">Top-4 chunks</span><span class="step-detail">Injected into prompt</span></div>
+    </div>
+
+    <h3>Ingestion Scripts</h3>
+    <table>
+      <tr><th>Script</th><th>What it does</th><th>Source count</th></tr>
+      <tr><td><code>bulk_ingest_tos.py</code></td><td>Pre-seeded static excerpts from 50 major services</td><td>50 documents</td></tr>
+      <tr><td><code>seed_knowledge_base.py</code></td><td>Fetches live ToS from 100+ company URLs using Trafilatura web scraping</td><td>100+ documents</td></tr>
+    </table>
+
+    <h3>Knowledge Base Categories (161 total sources)</h3>
+    <div class="card-grid">
+      <div class="card"><h4>⚖️ Regulations</h4><p>GDPR full text, CCPA full text — used as legal ground truth for classification.</p></div>
+      <div class="card"><h4>🤖 AI Platforms</h4><p>OpenAI, Anthropic, Midjourney, Stability AI, Hugging Face, Replicate.</p></div>
+      <div class="card"><h4>💬 Social / Communication</h4><p>Discord, TikTok, Twitter/X, Reddit, LinkedIn, Snapchat, WhatsApp, Telegram.</p></div>
+      <div class="card"><h4>🛠️ Developer / Cloud</h4><p>GitHub, Stripe, Cloudflare, Railway, AWS, Firebase, Vercel, Render, Heroku.</p></div>
+      <div class="card"><h4>💼 SaaS / Productivity</h4><p>Slack, Zoom, Notion, Figma, Airtable, Linear, Jira, Trello, Asana.</p></div>
+      <div class="card"><h4>🛍️ E-commerce / Finance</h4><p>Amazon, Etsy, Shopify, eBay, PayPal, Coinbase, Revolut, Wise, Stripe.</p></div>
+      <div class="card"><h4>🎬 Media / Entertainment</h4><p>Netflix, Spotify, Twitch, YouTube, Apple TV+, Disney+, Steam.</p></div>
+      <div class="card"><h4>🔒 Privacy Focused</h4><p>Mozilla, Creative Commons, Wikimedia, ProtonMail — as "good practice" examples.</p></div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────── DATABASE ──────────────────────── -->
+  <section id="database">
+    <h2><span class="icon">🗄️</span>Database — Supabase + pgvector</h2>
+
+    <p>The database layer is <strong>Supabase</strong> (managed PostgreSQL) with the <strong>pgvector</strong> extension
+    for high-dimensional vector similarity search. No separate vector DB is needed — everything lives in one place.</p>
+
+    <h3>Schema</h3>
+    <pre><code>-- Migration: 20260423073802_remote_commit.sql
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE documents (
+  id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  content    TEXT        NOT NULL,           -- chunk text (≤1500 chars)
+  embedding  vector(1536) NOT NULL,          -- OpenAI text-embedding-3-small
+  source     TEXT,                           -- source name or URL
+  metadata   JSONB,                          -- { "name": "...", "category": "..." }
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Semantic similarity search RPC
+CREATE OR REPLACE FUNCTION match_documents(
+  query_embedding vector(1536),
+  match_count     INT DEFAULT 5
+)
+RETURNS TABLE (id UUID, content TEXT, source TEXT, metadata JSONB, similarity FLOAT)
+LANGUAGE plpgsql AS $$
+BEGIN
+  RETURN QUERY
+  SELECT id, content, source, metadata,
+         1 - (documents.embedding &lt;=&gt; query_embedding) AS similarity
+  FROM documents
+  ORDER BY documents.embedding &lt;=&gt; query_embedding
+  LIMIT match_count;
+END;
+$$;</code></pre>
+
+    <h3>Why Supabase?</h3>
+    <div class="card-grid">
+      <div class="card"><h4>One service, two jobs</h4><p>Acts as both relational DB and vector store. No need to manage Pinecone, Weaviate, or Chroma separately.</p></div>
+      <div class="card"><h4>Managed hosting</h4><p>Free tier sufficient for development. No infra overhead — just connect with URL + service role key.</p></div>
+      <div class="card"><h4>pgvector cosine search</h4><p>Native SQL operator <code>&lt;=&gt;</code> for cosine distance on 1536-dimensional embeddings.</p></div>
+      <div class="card"><h4>JSONB metadata</h4><p>Each chunk stores arbitrary metadata (source name, category) alongside embedding — no extra table needed.</p></div>
+    </div>
+
+    <h3>Supabase Client</h3>
+    <pre><code># services/supabase_client.py — singleton pattern
+from supabase import create_client, Client
+
+_client: Client | None = None
+
+def get_supabase() -> Client:
+    global _client
+    if _client is None:
+        _client = create_client(settings.supabase_url,
+                                settings.supabase_service_role_key)
+    return _client</code></pre>
+  </section>
+
+  <!-- ─────────────────────────────── LLM ───────────────────────────── -->
+  <section id="llm">
+    <h2><span class="icon">🧠</span>LLM Providers</h2>
+
+    <table>
+      <tr><th>Role</th><th>Model</th><th>Provider</th><th>Use Case</th></tr>
+      <tr><td>Primary Analyst</td><td>gpt-4o</td><td>OpenAI</td><td>Main classification — full reasoning, best accuracy</td></tr>
+      <tr><td>Fast Agent</td><td>gpt-4o-mini</td><td>OpenAI</td><td>Extractor &amp; Communicator — speed-sensitive tasks</td></tr>
+      <tr><td>Fallback</td><td>claude-sonnet-4-5</td><td>Anthropic</td><td>If OpenAI is unavailable</td></tr>
+      <tr><td>Embeddings</td><td>text-embedding-3-small</td><td>OpenAI</td><td>1536-dim vectors for RAG ingest &amp; retrieval</td></tr>
+    </table>
+
+    <p>All models are configured at zero temperature (<code>temperature=0</code>) to ensure deterministic, consistent output across runs.</p>
+
+    <h3>LangChain Integration</h3>
+    <p>LLM instances are created via LangChain's <code>ChatOpenAI</code> / <code>ChatAnthropic</code> wrappers,
+    which CrewAI uses internally. This means swapping models is a single config change.</p>
+  </section>
+
+  <!-- ─────────────────────────────── EXTENSION ────────────────────── -->
+  <section id="extension">
+    <h2><span class="icon">🧩</span>Frontend — Chrome/Edge Extension</h2>
+
+    <p>The extension is a <strong>Manifest V3</strong> Chrome extension that works on any ToS/Privacy Policy page.
+    It auto-detects legal documents, extracts the text, and calls the backend.</p>
+
+    <h3>File Structure</h3>
+    <pre><code>frontend/extension/
+├── manifest.json        ← MV3, permissions: activeTab, storage, scripting
+├── src/
+│   ├── popup.html       ← 380px popup UI (no framework, vanilla HTML)
+│   ├── popup.css        ← Styling: blue header, risk colors, animations
+│   ├── popup.js         ← Main popup logic: extract → analyze → render
+│   ├── background.js    ← Service worker: stores API URL, handles messages
+│   ├── content.js       ← Injected into all pages: detects ToS, sets badge
+│   └── lib/
+│       ├── api_client.js   ← analyzeText(rawText, url, title)
+│       ├── detector.js     ← isToSPage(), extractText()
+│       └── highlighter.js  ← highlightFinding(), clearHighlights()</code></pre>
+
+    <h3>How It Works — Step by Step</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">Step 1 — Page Load</div>
+        <div class="tl-title">Content Script Detects ToS Page</div>
+        <div class="tl-body"><code>content.js</code> runs on every page. It scans the URL for patterns like <em>/privacy</em>, <em>/terms</em>, <em>/legal</em> and looks for "I agree" buttons. If detected, it sets the extension badge to "ToS" in yellow.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Step 2 — User Click</div>
+        <div class="tl-title">Popup Opens, User Hits "Analyze"</div>
+        <div class="tl-body">Popup injects a content script via <code>chrome.scripting.executeScript</code> to extract the full page text. A 3-step progress animation plays (~4s extracting → ~25s analyzing → preparing).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Step 3 — API Call</div>
+        <div class="tl-title">Text Sent to Backend</div>
+        <div class="tl-body"><code>api_client.js</code> POSTs to <code>https://backend-production-1d50.up.railway.app/api/v1/analyze</code> with the raw text, URL, and page title.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Step 4 — Results Rendered</div>
+        <div class="tl-title">Traffic Light + Finding Cards</div>
+        <div class="tl-body">Each finding is rendered as a colored card (red/yellow/green). The popup shows finding count, total latency, and source URL.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Step 5 — Highlighting</div>
+        <div class="tl-title">Click Card → Text Highlights on Page</div>
+        <div class="tl-body"><code>highlighter.js</code> uses progressive substring matching: tries the full <code>source_quote</code>, then 120 chars, 80 chars, 50 chars. Uses <code>window.find()</code> + <code>&lt;mark&gt;</code> DOM injection with risk-color backgrounds. Scrolls into view automatically.</div>
+      </div>
+    </div>
+
+    <h3>Highlight Colors</h3>
+    <div class="tl-row">
+      <div class="tl-box tl-red" style="font-size:13px">Background: <code>#fed7d7</code></div>
+      <div class="tl-box tl-yellow" style="font-size:13px">Background: <code>#fefcbf</code></div>
+      <div class="tl-box tl-green" style="font-size:13px">Background: <code>#c6f6d5</code></div>
+    </div>
+
+    <h3>UI Design</h3>
+    <p>Pure vanilla HTML/CSS/JS — no React, no build step required. Key design choices:</p>
+    <ul style="color:var(--gray);padding-left:20px;margin:8px 0;">
+      <li>380px fixed popup width — standard for extensions</li>
+      <li>System font stack: <code>-apple-system, Segoe UI, Roboto</code></li>
+      <li>Smooth CSS animations for spinner and step indicators</li>
+      <li>Hover effects on finding cards</li>
+      <li>One-click "Clear Highlights" button resets the page</li>
+    </ul>
+  </section>
+
+  <!-- ─────────────────────────────── STREAMLIT ────────────────────── -->
+  <section id="streamlit">
+    <h2><span class="icon">🖥️</span>Frontend — Streamlit Web App</h2>
+
+    <p>The Streamlit app provides a web interface for users who want to paste ToS text directly without the extension.</p>
+
+    <h3>File Structure</h3>
+    <pre><code>frontend/streamlit_app/
+├── app.py                   ← Main Streamlit app (single page)
+├── requirements.txt
+├── components/
+│   ├── traffic_light.py     ← render_traffic_light()
+│   ├── finding_card.py      ← render_finding_card()
+│   └── source_viewer.py     ← render_source_viewer()
+└── services/
+    └── api_client.py        ← analyze(), health()</code></pre>
+
+    <h3>UI Layout</h3>
+    <table>
+      <tr><th>Section</th><th>Content</th></tr>
+      <tr><td>Header</td><td>🛡️ TermsGuard AI branding</td></tr>
+      <tr><td>Sidebar</td><td>Backend health indicator + source display toggle</td></tr>
+      <tr><td>Input Tabs</td><td>"Paste URL" (coming soon) / "Paste Text" (active)</td></tr>
+      <tr><td>Output — Traffic Light</td><td>Color-coded risk badge</td></tr>
+      <tr><td>Output — Summary</td><td>One-paragraph plain-English overview</td></tr>
+      <tr><td>Output — Findings</td><td>Sorted cards: RED first, then YELLOW, then GREEN</td></tr>
+      <tr><td>Output — Source Viewer</td><td>Original text with highlighted spans at char positions</td></tr>
+    </table>
+
+    <h3>HTTP Client</h3>
+    <p><code>httpx</code> (async HTTP) is used to call the FastAPI backend. The Streamlit app is configured to point at the Railway production URL via <code>API_BASE_URL</code> environment variable.</p>
+  </section>
+
+  <!-- ─────────────────────────────── DEPLOYMENT ───────────────────── -->
+  <section id="deployment">
+    <h2><span class="icon">☁️</span>Deployment</h2>
+
+    <h3>Production Architecture</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4>Backend — Railway</h4>
+        <p>FastAPI backend runs as a containerised service on Railway.<br/>
+        URL: <code>backend-production-1d50.up.railway.app</code><br/>
+        Port: 8000 · Auto-restarts on crash.</p>
+      </div>
+      <div class="card">
+        <h4>Database — Supabase</h4>
+        <p>Managed PostgreSQL with pgvector. Free tier.<br/>
+        Accessed via Supabase client SDK using service role key.<br/>
+        161 documents pre-seeded in knowledge base.</p>
+      </div>
+      <div class="card">
+        <h4>Extension — Local / Chrome Store</h4>
+        <p>Chrome/Edge extension loaded as unpacked (developer mode) or submitted to Chrome Web Store.<br/>
+        Calls Railway backend via hardcoded production URL.</p>
+      </div>
+      <div class="card">
+        <h4>Streamlit — Docker / Railway</h4>
+        <p>Streamlit app runs in its own container.<br/>
+        <code>docker-compose up</code> spins up both backend + streamlit locally.</p>
+      </div>
+    </div>
+
+    <h3>Dockerfile (Backend)</h3>
+    <pre><code>FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+
+    <h3>Docker Compose (Local Dev)</h3>
+    <pre><code>services:
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    volumes: ["./backend:/app"]  # hot-reload
+    restart: unless-stopped
+
+  streamlit:
+    image: python:3.11-slim
+    ports: ["8501:8501"]
+    depends_on: [backend]
+    restart: unless-stopped</code></pre>
+
+    <h3>railway.json</h3>
+    <pre><code>{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": { "builder": "DOCKERFILE", "dockerfilePath": "backend/Dockerfile" },
+  "deploy": { "startCommand": "uvicorn app.main:app --host 0.0.0.0 --port 8000" }
+}</code></pre>
+  </section>
+
+  <!-- ─────────────────────────────── CI/CD ─────────────────────────── -->
+  <section id="cicd">
+    <h2><span class="icon">🔄</span>CI / CD Pipeline</h2>
+
+    <p>Three GitHub Actions workflows automate quality checks and deployment.</p>
+
+    <table>
+      <tr><th>Workflow</th><th>Trigger</th><th>Steps</th></tr>
+      <tr>
+        <td><code>ci-backend.yml</code></td>
+        <td>Push / PR to any branch</td>
+        <td>
+          1. Install Python 3.11<br/>
+          2. <code>pip install -r requirements-dev.txt</code><br/>
+          3. <code>ruff check</code> (linting)<br/>
+          4. <code>mypy</code> (type checking)<br/>
+          5. <code>pytest tests/unit/</code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>ci-frontend.yml</code></td>
+        <td>Push / PR to any branch</td>
+        <td>
+          1. <code>npm install</code> in extension dir<br/>
+          2. <code>eslint src/</code>
+        </td>
+      </tr>
+      <tr>
+        <td><code>deploy-backend.yml</code></td>
+        <td>Push to <code>main</code> branch only</td>
+        <td>
+          1. Install Railway CLI<br/>
+          2. <code>railway up --service backend --detach</code><br/>
+          Uses <code>RAILWAY_TOKEN</code> secret.
+        </td>
+      </tr>
+    </table>
+
+    <h3>Branch Strategy</h3>
+    <div class="card-grid">
+      <div class="card"><h4>main</h4><p>Production branch. Protected — changes via PR only. Auto-deploys to Railway on push.</p></div>
+      <div class="card"><h4>dev</h4><p>Integration branch. Feature branches merge here first. CI runs on all PRs.</p></div>
+      <div class="card"><h4>v0.2-dev</h4><p>Next version feature branch — multi-agent full pipeline, URL fetching.</p></div>
+    </div>
+
+    <h3>Testing</h3>
+    <table>
+      <tr><th>Type</th><th>Files</th><th>What's Tested</th></tr>
+      <tr><td>Unit</td><td><code>test_analyst.py</code>, <code>test_communicator.py</code>, <code>test_extractor.py</code>, <code>test_rag.py</code></td><td>Clause classifier RED/YELLOW/GREEN detection, output validation, retrieval logic</td></tr>
+      <tr><td>Integration</td><td><code>test_api_analyze.py</code>, <code>test_crew_end_to_end.py</code></td><td>Full API endpoint, crew orchestration end-to-end</td></tr>
+      <tr><td>Evaluation</td><td><code>ground_truth.json</code> + <code>run_eval.py</code></td><td>Expected outputs for 10 real ToS samples — precision/recall tracking</td></tr>
+    </table>
+  </section>
+
+  <!-- ─────────────────────────────── EVOLUTION ────────────────────── -->
+  <section id="evolution">
+    <h2><span class="icon">📈</span>Development Evolution</h2>
+    <p>The project went through significant architectural changes from initial plan to final version. Here is the honest story of what was planned, what changed, and why.</p>
+
+    <h3>Phase 1 — Foundation (Planned vs. Reality)</h3>
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <p><strong>Planned:</strong> Simple single-agent ToS analyzer, basic FastAPI endpoint, minimal frontend.</p>
+      <p><strong>What happened:</strong> Phase 1 expanded significantly — full CrewAI multi-agent skeleton (Extractor → Analyst → Communicator), Supabase RAG layer, and even CI/CD pipelines were all scaffolded from day one. Commits show the full architecture being laid down: models, agents, tools, routes, tests, Docker, GitHub Actions — all in the first week.</p>
+    </div>
+
+    <h3>Full Git Timeline</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">Initial</div>
+        <div class="tl-title">Repository Initialisation</div>
+        <div class="tl-body">Repo structure, .env.example, .gitignore. Standard project bootstrapping.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 1</div>
+        <div class="tl-title">Domain Models</div>
+        <div class="tl-body">Pydantic models defined: Document, Finding, AnalystFinding, Report, RiskLevel enum. The data contract was established before any logic was written.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 1</div>
+        <div class="tl-title">Config + Service Clients</div>
+        <div class="tl-body">pydantic-settings config, Supabase client singleton, LLM provider factories (OpenAI + Anthropic). Infrastructure before logic.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 2</div>
+        <div class="tl-title">RAG Layer</div>
+        <div class="tl-body">Embedder, ingest, and retriever modules with Supabase pgvector. Foundation for the knowledge base.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 2</div>
+        <div class="tl-title">CrewAI Agents + Orchestrator</div>
+        <div class="tl-body">Full three-agent pipeline scaffolded: Extractor → Analyst → Communicator. RagSearchTool and ClauseClassifierTool defined.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 3</div>
+        <div class="tl-title">FastAPI Routes + App Entry</div>
+        <div class="tl-body">Health and analyze endpoints wired up. App becomes functional for the first time.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 3</div>
+        <div class="tl-title">Docker + Requirements</div>
+        <div class="tl-body">Dockerfile, docker-compose.yml, requirements.txt added. Can now run locally in containers.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 3</div>
+        <div class="tl-title">Unit + Integration Tests</div>
+        <div class="tl-body">pytest test suite for all agents and API endpoints. Ground truth JSON for evaluation harness.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 4</div>
+        <div class="tl-title">CI/CD + GitHub Actions</div>
+        <div class="tl-body">ci-backend.yml (ruff + mypy + pytest), ci-frontend.yml (ESLint), deploy-backend.yml (Railway). Full automation.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 4</div>
+        <div class="tl-title">Streamlit Frontend</div>
+        <div class="tl-body">Web UI with traffic light component, finding cards, source viewer. Connects to backend via httpx.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 4</div>
+        <div class="tl-title">Chrome Extension</div>
+        <div class="tl-body">MV3 extension: popup, content script, background worker, detector, highlighter, api client. Full browser integration.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">v0.1.0 merge</div>
+        <div class="tl-title">Phases 1-4 Complete — First Release</div>
+        <div class="tl-body">Dev branch merged to main. First deployable version.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Post v0.1.0</div>
+        <div class="tl-title">Production URL Wired Up</div>
+        <div class="tl-body">Extension and Streamlit pointed at Railway production backend instead of localhost.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Bug Fix Sprint</div>
+        <div class="tl-title">Dependency + CORS Fixes</div>
+        <div class="tl-body">Relaxed openai pin to satisfy langchain-openai constraint. Fixed CORS env parsing crash (JSON array vs comma-separated string edge case).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Eval Harness</div>
+        <div class="tl-title">Ground Truth + run_eval.py</div>
+        <div class="tl-body">Built evaluation framework with expected outputs for 10 real ToS samples. Enabled systematic measurement of risk classification accuracy.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Calibration Sprint</div>
+        <div class="tl-title">Risk Levels Re-calibrated</div>
+        <div class="tl-body"><strong>Key insight:</strong> Initial version flagged too many things as RED. Needed to recalibrate to match real-world ToS norms — most services share data with partners, so that alone shouldn't be RED. ClauseClassifier thresholds tightened, GREEN filter post-processor added.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Extension Fixes</div>
+        <div class="tl-title">Highlighting + Icons + Content Script</div>
+        <div class="tl-body">Multiple fixing iterations: missing icons, ES module issues in content script, highlighting via executeScript, window.find() approach for robust cross-node text detection.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">v0.1.1</div>
+        <div class="tl-title">Deterministic Post-Processor</div>
+        <div class="tl-body">Traffic light no longer LLM-only — a deterministic rule layer confirms/overrides based on finding distribution. Makes output reproducible.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Performance Sprint</div>
+        <div class="tl-title">Speed: 45s → ~8s</div>
+        <div class="tl-body"><strong>This was the biggest challenge.</strong> Railway proxy has a 30s timeout. The original three-agent CrewAI pipeline took 40-45s. Multiple approaches tried:
+          <br/>• Switched Extractor + Communicator to gpt-4o-mini (saved ~8s)
+          <br/>• Replaced Communicator with direct LLM call (bypassed CrewAI overhead)
+          <br/>• Tried job queue pattern to bypass timeout (worked but complex)
+          <br/>• Increased truncation from 8000 → 15000 chars (reverted — slower)
+          <br/>• Final solution: <strong>single-agent single-call pipeline</strong> — all three roles merged into one agent + one prompt. Result: ~8s consistently.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Knowledge Base Expansion</div>
+        <div class="tl-title">50 → 161 Sources</div>
+        <div class="tl-body">RAG knowledge base tripled in size. Added AI platforms (OpenAI, Anthropic), more financial services, and GDPR/CCPA full texts. Chunk size increased for better context windows.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Final State</div>
+        <div class="tl-title">Extension Icons + Google Store Variant</div>
+        <div class="tl-body">Replaced placeholder icons with proper shield+checkmark design. Added <code>extention_google/</code> with store screenshots and icon.</div>
+      </div>
+    </div>
+
+    <h3>What Was Planned vs. What Happened</h3>
+    <table>
+      <tr><th>Area</th><th>Original Plan</th><th>Final Reality</th><th>Reason for Change</th></tr>
+      <tr><td>Agent count</td><td>3 sequential agents (Extractor → Analyst → Communicator)</td><td>1 agent in production (all-in-one prompt)</td><td>3-agent pipeline was too slow (45s) for Railway's 30s proxy timeout</td></tr>
+      <tr><td>Response time</td><td>~45 seconds acceptable</td><td>Target &lt;10s, achieved ~8s</td><td>User testing showed 45s was unusable in extension popup</td></tr>
+      <tr><td>Knowledge base</td><td>~20 hand-picked documents</td><td>161 sources including regulations</td><td>Broader KB significantly improved classification accuracy on unfamiliar services</td></tr>
+      <tr><td>Risk calibration</td><td>Binary: any data sharing = RED</td><td>Nuanced 3-tier with post-processor</td><td>Initial version had too many false positives — almost every ToS was fully RED</td></tr>
+      <tr><td>Highlighting</td><td>Simple text search</td><td>Progressive substring matching + window.find()</td><td>DOM structure varies widely; simple search broke on complex pages</td></tr>
+      <tr><td>URL fetching</td><td>Extension auto-fetches URL on open</td><td>Manual paste (URL tab: "coming soon")</td><td>CORS and content-type issues with live fetching pushed to v0.2</td></tr>
+      <tr><td>Multi-model fallback</td><td>OpenAI only</td><td>OpenAI primary + Anthropic fallback</td><td>Added resilience for API outages</td></tr>
+    </table>
+  </section>
+
+  <!-- ─────────────────────────────── STATUS ────────────────────────── -->
+  <section id="status">
+    <h2><span class="icon">✅</span>Current Status &amp; What's Next</h2>
+
+    <h3>What Works Today (v0.1.1)</h3>
+    <div class="card-grid">
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ Backend API</h4>
+        <p>FastAPI backend fully operational on Railway. Health endpoint and analyze endpoint both live.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ RAG Knowledge Base</h4>
+        <p>161 documents ingested and searchable. Supabase pgvector returning relevant chunks.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ Chrome Extension</h4>
+        <p>Works on any page. Text extraction, analysis, finding cards, and in-page highlighting all functional.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ Streamlit Web UI</h4>
+        <p>Web app for manual paste analysis. Traffic light, findings, source viewer all working.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ CI/CD Pipeline</h4>
+        <p>GitHub Actions runs lint + type check + tests on every push. Auto-deploys to Railway on main.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--green)">
+        <h4>✅ Evaluation Harness</h4>
+        <p>Ground truth JSON with run_eval.py for measuring classification accuracy over time.</p>
+      </div>
+    </div>
+
+    <h3>Known Limitations / v0.2 Roadmap</h3>
+    <table>
+      <tr><th>Item</th><th>Status</th><th>Notes</th></tr>
+      <tr><td>URL auto-fetch</td><td><span class="chip chip-yellow">Coming soon</span></td><td>Extension and Streamlit "Paste URL" tab — blocked on CORS/content-type handling</td></tr>
+      <tr><td>Full multi-agent pipeline</td><td><span class="chip chip-yellow">Branch v0.2-dev</span></td><td>3-agent flow defined — waiting on async streaming to avoid timeout</td></tr>
+      <tr><td>PlainLanguageRewriterTool</td><td><span class="chip chip-gray">Stub</span></td><td>Tool class exists, logic not implemented</td></tr>
+      <tr><td>SourceAttribution service</td><td><span class="chip chip-gray">Stub</span></td><td>Planned to link findings directly to KB source articles</td></tr>
+      <tr><td>Multi-language support</td><td><span class="chip chip-gray">Stub</span></td><td><code>utils/language.py</code> scaffolded — not implemented</td></tr>
+      <tr><td>Firefox extension</td><td><span class="chip chip-gray">Not started</span></td><td>MV3 is Chrome/Edge only; Firefox uses MV2 variant</td></tr>
+    </table>
+
+    <div class="info-box" style="margin-top:24px">
+      <strong>Key Takeaway:</strong> TermsGuard AI successfully demonstrates a full-stack AI application combining
+      multi-agent LLM orchestration, vector RAG retrieval, browser extension integration, and production deployment —
+      all built and iterated on during a single course. The performance constraint (45s → 8s) forced real architectural
+      trade-offs that reflect real-world AI system design challenges.
+    </div>
+  </section>
+
+</main>
+</div>
+</body>
+</html>
