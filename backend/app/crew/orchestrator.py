@@ -1,16 +1,10 @@
 import json
 import logging
 import time
-from concurrent.futures import ThreadPoolExecutor
 
-from crewai import Crew, Process
+from crewai import Agent, Crew, Process, Task
 from langchain_core.messages import HumanMessage
 
-from app.crew.agents.analyst import build_fast_analyst
-from app.crew.agents.extractor import build_extractor
-from app.crew.tasks.analyze_task import build_analyze_task_enriched
-from app.crew.tasks.extract_task import build_extract_task
-from app.crew.tools.clause_classifier_tool import ClauseClassifierTool
 from app.crew.tools.rag_search_tool import RagSearchTool
 from app.models.document import DocMeta, Document
 from app.models.finding import Finding, RiskLevel
@@ -27,94 +21,126 @@ _GREEN_INDICATORS = [
 
 logger = logging.getLogger(__name__)
 
+_TASK_TEMPLATE = """\
+You are a privacy lawyer and legal document analyst.
 
-def _enrich_clause(clause: dict) -> dict:
-    """Run classifier (Python) + RAG (Supabase) for one clause — no LLM."""
-    text = clause.get("text", "")
-    classifier_result = ClauseClassifierTool()._run(clause_text=text)
-    rag_result = RagSearchTool()._run(query=text[:500], k=3)
-    return {**clause, "classifier": classifier_result, "rag": rag_result}
+Analyze the Terms of Service / Privacy Policy below.
+Relevant legal knowledge base context is provided to guide your assessment.
+
+LEGAL KNOWLEDGE BASE:
+{rag_context}
+
+DOCUMENT ({chars} chars):
+{raw_text}
+
+INSTRUCTIONS:
+- Read the document and identify every clause that is RED or YELLOW risk.
+- Skip standard/boilerplate clauses entirely — do not include them in output.
+- For each risky clause, copy the exact verbatim text as source_quote.
+
+RISK LEVELS:
+RED — reasonable person would refuse to sign:
+  • Selling or renting personal data to third parties
+  • Mandatory binding arbitration / waiving class action rights
+  • Retaining data indefinitely or after account deletion
+  • Unilateral changes with zero notice
+  • Irrevocable, perpetual content license
+
+YELLOW — worth knowing:
+  • Targeted / behavioural advertising
+  • Sharing data with ad or analytics partners
+  • Using content to train AI/ML models
+  • Auto-renewal billing
+  • Sole-discretion account termination
+  • Data retention beyond 2 years
+  • Terms changes with less than 14 days notice
+
+GREEN — do NOT include in output:
+  • Standard cookies or analytics for service improvement
+  • 30+ days advance notice for changes
+  • Minimal or purpose-limited data collection
+  • Explicit no-sell / no-share statements
+  • User rights to export or delete data
+  • Standard security or encryption practices
+
+OUTPUT: a single JSON object, no prose, no markdown fences:
+{{
+  "traffic_light": "red" | "yellow" | "green",
+  "summary": "one short plain-English paragraph describing the overall risk level",
+  "findings": [
+    {{
+      "title": "short plain-English title",
+      "explanation": "1-2 sentences on the practical impact to the user",
+      "risk": "red" | "yellow" | "green",
+      "source_quote": "verbatim text copied from the document",
+      "char_start": 0,
+      "char_end": 0
+    }}
+  ]
+}}
+
+If no RED or YELLOW clauses exist, return traffic_light green and an empty findings array.\
+"""
 
 
-def _communicate_direct(analyst_output: str, doc_meta: dict) -> str:
-    prompt = (
-        "You will receive a JSON array of AnalystFindings.\n\n"
-        "Produce a final Report JSON object:\n"
-        "  1. traffic_light: 'red' if ANY finding has risk 'red'; "
-        "'yellow' if no red but ANY yellow; 'green' if all green or zero findings.\n"
-        "  2. summary: one short paragraph in plain English describing the overall risk.\n"
-        "  3. findings: array where each item has:\n"
-        "       - title: one-line plain-English title\n"
-        "       - explanation: 1-2 sentences explaining the practical impact to the user\n"
-        "       - risk: red | yellow | green\n"
-        "       - source_quote: COPIED VERBATIM from the AnalystFinding\n"
-        "       - char_start: COPIED VERBATIM from the AnalystFinding\n"
-        "       - char_end: COPIED VERBATIM from the AnalystFinding\n"
-        f"  4. doc_meta: {doc_meta}\n\n"
-        "Rules: never add findings the Analyst didn't produce; never alter source_quote or char offsets; "
-        "write for a general audience — no legalese; output ONLY the JSON object.\n\n"
-        f"Analyst findings:\n{analyst_output}"
-    )
-    llm = get_fast_llm()
-    response = llm.invoke([HumanMessage(content=prompt)])
-    return response.content
+def _fetch_rag_context(raw_text: str) -> str:
+    query = raw_text[:400]
+    try:
+        result = RagSearchTool()._run(query=query, k=4)
+        lines = []
+        for chunk in result.split("\n\n"):
+            lines.append(chunk[:250])
+        return "\n\n".join(lines)
+    except Exception:
+        return ""
 
 
 def run_pipeline(document: Document) -> Report:
     start_ms = time.monotonic()
 
-    # Phase 1 — Extract clauses (CrewAI extractor agent, gpt-4o-mini)
-    extractor = build_extractor()
-    extract_task = build_extract_task(extractor, document.raw_text)
-    crew1 = Crew(
-        agents=[extractor],
-        tasks=[extract_task],
+    rag_context = _fetch_rag_context(document.raw_text)
+
+    truncated = document.raw_text[:10000]
+
+    task_description = _TASK_TEMPLATE.format(
+        rag_context=rag_context or "No context retrieved.",
+        raw_text=truncated,
+        chars=len(truncated),
+    )
+
+    agent = Agent(
+        role="Privacy Policy Analyst",
+        goal="Read a Terms of Service document and produce a structured risk report in JSON.",
+        backstory=(
+            "You are a privacy lawyer with expertise in GDPR, CCPA, and consumer rights. "
+            "You identify clauses that could harm users and explain them in plain English."
+        ),
+        llm=get_fast_llm(),
+        verbose=False,
+        allow_delegation=False,
+    )
+
+    task = Task(
+        description=task_description,
+        expected_output="A single JSON object with traffic_light, summary, and findings array.",
+        agent=agent,
+    )
+
+    crew = Crew(
+        agents=[agent],
+        tasks=[task],
         process=Process.sequential,
         verbose=False,
     )
-    extract_result = str(crew1.kickoff())
 
-    # Parse clause list
-    raw = extract_result
-    if "```" in raw:
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    try:
-        clauses = json.loads(raw.strip())
-        if not isinstance(clauses, list):
-            clauses = []
-    except (json.JSONDecodeError, ValueError):
-        logger.error("Extractor output is not valid JSON: %s", extract_result[:300])
-        clauses = []
-
-    # Phase 2 — Pre-fetch classifier + RAG for all clauses in parallel (no LLM)
-    if clauses:
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            enriched_clauses = list(executor.map(_enrich_clause, clauses))
-    else:
-        enriched_clauses = []
-
-    # Phase 3 — Analyze all clauses in one shot (CrewAI analyst agent, gpt-4o-mini, no tools)
-    analyst = build_fast_analyst()
-    analyze_task = build_analyze_task_enriched(analyst, enriched_clauses)
-    crew2 = Crew(
-        agents=[analyst],
-        tasks=[analyze_task],
-        process=Process.sequential,
-        verbose=False,
-    )
-    analyst_output = str(crew2.kickoff())
-
-    # Phase 4 — Format into final report (direct LLM call, gpt-4o-mini)
-    communicate_raw = _communicate_direct(analyst_output, document.meta.model_dump())
-
+    result = str(crew.kickoff())
     elapsed_ms = int((time.monotonic() - start_ms) * 1000)
-    report = _parse_report(communicate_raw, document.meta, elapsed_ms)
-    return _post_process(report, document.raw_text)
+
+    report = _parse_report(result, document.meta, elapsed_ms)
+    return _post_process(report)
 
 
-def _post_process(report: Report, raw_text: str) -> Report:
+def _post_process(report: Report) -> Report:
     findings = [
         f for f in report.findings
         if not any(gi in f.source_quote.lower() for gi in _GREEN_INDICATORS)
@@ -145,7 +171,7 @@ def _parse_report(raw: str, doc_meta: DocMeta, processing_ms: int) -> Report:
     try:
         data = json.loads(raw.strip())
     except json.JSONDecodeError:
-        logger.error("Failed to parse communicate output as JSON: %s", raw[:500])
+        logger.error("Failed to parse agent output as JSON: %s", raw[:500])
         return Report(
             traffic_light=RiskLevel.RED,
             summary="Analysis could not be completed. Please try again.",
