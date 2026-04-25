@@ -1,3 +1,5 @@
+import json
+
 from crewai import Agent, Task
 
 
@@ -56,4 +58,65 @@ def build_analyze_task(agent: Agent, extract_task: Task) -> Task:
         ),
         agent=agent,
         context=[extract_task],
+    )
+
+
+def build_analyze_task_enriched(agent: Agent, enriched_clauses: list[dict]) -> Task:
+    """Single-shot analysis task with classifier + RAG context pre-injected — no tool calls needed."""
+    clauses_block = json.dumps(
+        [
+            {
+                "clause_id": c.get("clause_id"),
+                "topic": c.get("topic"),
+                "text": c.get("text"),
+                "char_start": c.get("char_start", 0),
+                "char_end": c.get("char_end", 0),
+                "classifier_hint": c.get("classifier", ""),
+                "kb_context": c.get("rag", ""),
+            }
+            for c in enriched_clauses
+        ],
+        indent=2,
+    )
+
+    return Task(
+        description=(
+            "All clauses have been pre-processed with classifier hints and knowledge base context.\n\n"
+            "For each clause below, use the classifier_hint and kb_context already provided — "
+            "DO NOT call any tools.\n\n"
+            "RISK CALIBRATION — the standard: would a reasonable person refuse to sign this?\n\n"
+            "RED (clear user harm):\n"
+            "  - Selling or renting personal data to third parties for profit\n"
+            "  - Mandatory binding arbitration waiving class action rights\n"
+            "  - Retaining personal data indefinitely or after account deletion\n"
+            "  - Unilateral terms changes with ZERO notice\n"
+            "  - Irrevocable, perpetual content license stripping user ownership\n\n"
+            "YELLOW (worth knowing):\n"
+            "  - Targeted / behavioural advertising using personal data\n"
+            "  - Sharing data with third-party analytics or advertising partners\n"
+            "  - Using user content to train AI/ML models\n"
+            "  - Auto-renewal billing\n"
+            "  - Broad sole-discretion termination\n"
+            "  - Data retention beyond 2 years\n"
+            "  - Terms changes with under 14 days notice\n\n"
+            "GREEN (do NOT flag):\n"
+            "  - Standard cookies / analytics\n"
+            "  - 30+ days notice for changes\n"
+            "  - Minimal data collection\n"
+            "  - Explicit no-sell statements\n"
+            "  - User data rights\n"
+            "  - Standard security practices\n"
+            "  - Data deleted within 30 days of account closure\n\n"
+            "CRITICAL RULES:\n"
+            "  - Do NOT invent risks. Every finding must be grounded in an actual clause.\n"
+            "  - Drop GREEN and boilerplate clauses entirely.\n"
+            "  - Output ONLY a JSON array. No prose.\n"
+            "  - Each finding: { clause_id, topic, risk, rationale, source_quote, char_start, char_end, retrieved_refs }\n\n"
+            f"Clauses to analyze:\n{clauses_block}"
+        ),
+        expected_output=(
+            "A JSON array of AnalystFinding objects with fields: "
+            "clause_id, topic, risk, rationale, source_quote, char_start, char_end, retrieved_refs."
+        ),
+        agent=agent,
     )
