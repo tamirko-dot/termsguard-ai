@@ -24,7 +24,7 @@ function showLoading() {
   s2.className = "step pending";
   s3.className = "step pending";
   stepTimers.push(setTimeout(() => { s1.className = "step done"; s2.className = "step active"; }, 4000));
-  stepTimers.push(setTimeout(() => { s2.className = "step done"; s3.className = "step active"; }, 11000));
+  stepTimers.push(setTimeout(() => { s2.className = "step done"; s3.className = "step active"; }, 25000));
 }
 
 function hideLoading() {

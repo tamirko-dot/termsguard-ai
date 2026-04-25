@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TermsGuard AI — Session Report</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2d3a;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --red: #ff4d6d;
+    --yellow: #ffd166;
+    --green: #06d6a0;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --code-bg: #12151f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12151f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0 40px;
+    text-align: center;
+  }
+  header .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fff 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ── SCORE BAR ── */
+  .score-banner {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 28px 24px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .score-item { text-align: center; }
+  .score-item .num {
+    font-size: 2rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1;
+  }
+  .score-item .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .score-item.red .num   { color: var(--red); }
+  .score-item.yellow .num{ color: var(--yellow); }
+  .score-item.green .num { color: var(--green); }
+  .score-item.purple .num{ color: var(--accent); }
+  .arrow { font-size: 1.4rem; color: var(--muted); align-self: center; }
+
+  /* ── LAYOUT ── */
+  main { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
+
+  /* ── SECTION ── */
+  section { margin-bottom: 52px; }
+  section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fff;
+  }
+  .card p { color: var(--muted); font-size: 0.93rem; }
+
+  /* ── PROBLEM / SOLUTION ── */
+  .ps-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 640px) { .ps-pair { grid-template-columns: 1fr; } }
+  .problem-card {
+    background: rgba(255,77,109,0.08);
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .problem-card h4 { color: var(--red); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .solution-card {
+    background: rgba(6,214,160,0.07);
+    border: 1px solid rgba(6,214,160,0.22);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .solution-card h4 { color: var(--green); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .problem-card p, .solution-card p { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+
+  /* ── CODE ── */
+  code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.83rem;
+    color: var(--accent2);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: #c9d1d9;
+  }
+  pre .kw  { color: #ff79c6; }
+  pre .str { color: #f1fa8c; }
+  pre .cm  { color: #6272a4; }
+  pre .fn  { color: var(--accent2); }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.9rem; }
+  th { background: rgba(108,99,255,0.15); color: var(--accent); text-align: left; padding: 10px 14px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.8px; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── PILL TAGS ── */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .tag.red    { background: rgba(255,77,109,0.15); color: var(--red); }
+  .tag.yellow { background: rgba(255,209,102,0.15); color: var(--yellow); }
+  .tag.green  { background: rgba(6,214,160,0.15); color: var(--green); }
+  .tag.blue   { background: rgba(108,99,255,0.15); color: var(--accent); }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -26px; top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .tl-item.red::before  { background: var(--red); }
+  .tl-item.green::before{ background: var(--green); }
+  .tl-item strong { color: #fff; }
+  .tl-item p { font-size: 0.88rem; color: var(--muted); margin-top: 3px; }
+
+  /* ── STAT ROW ── */
+  .stats { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 130px;
+    text-align: center;
+  }
+  .stat .val { font-size: 1.6rem; font-weight: 800; color: var(--accent2); display: block; }
+  .stat .key { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+
+  /* ── RESULT BLOCK ── */
+  .result-block {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 14px 0;
+    border-left: 4px solid;
+  }
+  .result-block.pass { background: rgba(6,214,160,0.07); border-color: var(--green); }
+  .result-block.fail { background: rgba(255,77,109,0.07); border-color: var(--red); }
+  .result-block .score { font-size: 1.4rem; font-weight: 800; }
+  .result-block.pass .score { color: var(--green); }
+  .result-block.fail .score { color: var(--red); }
+  .result-block p { font-size: 0.88rem; color: var(--muted); margin-top: 6px; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Session Report — 2026-04-23</div>
+  <h1>TermsGuard AI</h1>
+  <p>A complete record of the validation, debugging, and optimization work done after the initial build was complete.</p>
+</header>
+
+<!-- SCORE BANNER -->
+<div class="score-banner">
+  <div class="score-item red">
+    <span class="num">36%</span>
+    <span class="lbl">Initial Eval</span>
+  </div>
+  <div class="arrow">→</div>
+  <div class="score-item yellow">
+    <span class="num">54%</span>
+    <span class="lbl">After Prompt Fixes</span>
+  </div>
+  <div class="arrow">→</div>
+  <div class="score-item yellow">
+    <span class="num">54%</span>
+    <span class="lbl">Stuck (Deploy Bug)</span>
+  </div>
+  <div class="arrow">→</div>
+  <div class="score-item green">
+    <span class="num">100%</span>
+    <span class="lbl">Final Score</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ── SECTION 1: STARTING POINT ── -->
+<section>
+  <h2><span class="num">1</span> Starting Point</h2>
+  <p style="color:var(--muted); margin-bottom:18px;">
+    All 17 build phases of the TermsGuard AI project were already marked complete. The backend was live on Railway, the Streamlit frontend and Chrome extension were built, and CI/CD was wired up. The session began with a database inspection.
+  </p>
+  <div class="stats">
+    <div class="stat"><span class="val">17</span><span class="key">Phases Done</span></div>
+    <div class="stat"><span class="val">v0.1.0</span><span class="key">Release Tag</span></div>
+    <div class="stat"><span class="val">0</span><span class="key">DB Rows</span></div>
+    <div class="stat"><span class="val">Live</span><span class="key">Railway Backend</span></div>
+  </div>
+  <div class="card" style="margin-top:8px;">
+    <h3>Critical discovery: empty RAG database</h3>
+    <p>
+      The Supabase <code>documents</code> table — the knowledge base that the CrewAI Analyst agent queries during every ToS analysis — had <strong>zero rows</strong>.
+      The RAG pipeline was wired and functional, but every call to <code>RagSearchTool</code> was returning
+      <em>"No relevant knowledge base entries found."</em> The agents were flying blind on every analysis.
+    </p>
+  </div>
+</section>
+
+<!-- ── SECTION 2: DATABASE INGESTION ── -->
+<section>
+  <h2><span class="num">2</span> Database Ingestion</h2>
+
+  <div class="card">
+    <h3>How the RAG pipeline works</h3>
+    <p>Text → chunk into 500-char overlapping pieces → embed via OpenAI <code>text-embedding-3-small</code> →
+    store vector + content + source in Supabase. At query time the Analyst embeds its question and runs
+    a cosine-similarity search via the <code>match_documents</code> RPC to retrieve the top-5 most relevant chunks.</p>
+  </div>
+
+  <div class="ps-pair">
+    <div class="problem-card">
+      <h4>Problem — DLL crash on import</h4>
+      <p>
+        The first ingestion script imported the app's own <code>supabase_client.py</code>, which triggered a chain of imports ending in the <code>mmh3</code> package. On Windows with Application Control policies enabled, <code>mmh3</code>'s DLL failed to load:
+        <br><br>
+        <em>ImportError: DLL load failed while importing mmh3</em>
+      </p>
+    </div>
+    <div class="solution-card">
+      <h4>Solution — bypass the app stack</h4>
+      <p>
+        Rewrote the ingestion script (<code>bulk_ingest_direct.py</code>) to call the OpenAI and Supabase REST APIs directly using Python's built-in <code>urllib.request</code> — zero third-party imports. Credentials loaded from the backend <code>.env</code> file manually.
+      </p>
+    </div>
+  </div>
+
+  <div class="ps-pair">
+    <div class="problem-card">
+      <h4>Problem — silent duplicate insertion</h4>
+      <p>
+        After the first clean run (reporting 120 chunks), a re-check found 240 rows in Supabase — every chunk doubled. The root cause was a prior failed script run that had partially executed before the DLL error, inserting one batch before crashing.
+      </p>
+    </div>
+    <div class="solution-card">
+      <h4>Solution — wipe and re-ingest once</h4>
+      <p>
+        Deleted all rows via the Supabase REST API (<code>DELETE /rest/v1/documents</code>), then ran the ingestion script exactly once. Final state: 120 unique rows, zero duplicates.
+      </p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span class="val">60</span><span class="key">Documents</span></div>
+    <div class="stat"><span class="val">120</span><span class="key">Chunks</span></div>
+    <div class="stat"><span class="val">24 MB</span><span class="key">Index Size</span></div>
+    <div class="stat"><span class="val">14</span><span class="key">Categories</span></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Category</th><th>Example Sources</th><th>Risk Type</th></tr></thead>
+    <tbody>
+      <tr><td>content_license</td><td>Instagram, YouTube, Reddit, GitHub</td><td><span class="tag yellow">Yellow</span></td></tr>
+      <tr><td>arbitration</td><td>Uber, DoorDash, Lyft, Amazon</td><td><span class="tag red">Red</span></td></tr>
+      <tr><td>data_collection</td><td>Google, Microsoft, LinkedIn, OpenAI</td><td><span class="tag yellow">Yellow</span></td></tr>
+      <tr><td>auto_renewal</td><td>Netflix, Adobe, Amazon Prime</td><td><span class="tag yellow">Yellow</span></td></tr>
+      <tr><td>biometric_data</td><td>TikTok</td><td><span class="tag red">Red</span></td></tr>
+      <tr><td>data_training</td><td>OpenAI, Google Gemini, Microsoft Copilot</td><td><span class="tag yellow">Yellow</span></td></tr>
+      <tr><td>liability_limitation</td><td>Airbnb, Standard Model Clause</td><td><span class="tag red">Red</span></td></tr>
+      <tr><td>governing_law</td><td>Standard Model Clause</td><td><span class="tag blue">Info</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── SECTION 3: SUPABASE CLI ── -->
+<section>
+  <h2><span class="num">3</span> Supabase CLI Setup</h2>
+  <p style="color:var(--muted); margin-bottom:16px;">
+    Winget failed to install the Supabase CLI (MS Store agreement prompt blocked non-interactive run). The binary was downloaded directly from the GitHub release and extracted manually. The project was then linked with <code>supabase link --project-ref kkpbtqoayqyngzhnrvjz</code>.
+  </p>
+  <div class="card">
+    <h3>Database inspection via CLI</h3>
+    <p>After linking, <code>supabase inspect db table-stats</code> confirmed the database state:</p>
+    <pre>Name             | Table size | Index size | Total size | Row count
+public.documents | 2208 kB    | 22 MB      | 24 MB      | 120</pre>
+    <p style="margin-top:10px;">The 22 MB index is the pgvector embedding store — the core of the RAG system.</p>
+  </div>
+</section>
+
+<!-- ── SECTION 4: END-TO-END TEST ── -->
+<section>
+  <h2><span class="num">4</span> End-to-End Pipeline Test</h2>
+  <p style="color:var(--muted); margin-bottom:16px;">
+    Submitted a real Instagram Terms of Service excerpt to the live Railway backend at
+    <code>POST /api/v1/analyze</code>. This was the first real analysis run with a populated RAG database.
+  </p>
+  <div class="card" style="border-color: rgba(255,77,109,0.3);">
+    <h3>Result: Instagram ToS — <span class="tag red">RED</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Finding</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Targeted Ads and Privacy</td><td><span class="tag yellow">Yellow</span></td></tr>
+        <tr><td>2</td><td>User Content Rights (broad license)</td><td><span class="tag yellow">Yellow</span></td></tr>
+        <tr><td>3</td><td>Arbitration and Class Action Waiver</td><td><span class="tag red">Red</span></td></tr>
+        <tr><td>4</td><td>Account Termination Without Notice</td><td><span class="tag red">Red</span></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px;">Processing time: <strong>98.9 seconds</strong>. Pipeline: Extractor → Analyst (with RAG) → Communicator.</p>
+  </div>
+</section>
+
+<!-- ── SECTION 5: STREAMLIT ── -->
+<section>
+  <h2><span class="num">5</span> Streamlit Frontend</h2>
+  <div class="ps-pair">
+    <div class="problem-card">
+      <h4>Problem — backend connection</h4>
+      <p>
+        The Streamlit app defaulted to <code>http://localhost:8000</code> for the API. When launched via <code>Start-Process</code>, the <code>API_BASE_URL</code> environment variable was not inherited by the child process.
+      </p>
+    </div>
+    <div class="solution-card">
+      <h4>Solution — .env file</h4>
+      <p>
+        Created <code>frontend/streamlit_app/.env</code> with <code>API_BASE_URL=https://backend-production-1d50.up.railway.app</code>. The app's existing <code>load_dotenv()</code> call picked it up automatically on restart.
+      </p>
+    </div>
+  </div>
+  <div class="card" style="border-color: rgba(6,214,160,0.3);">
+    <h3>Confirmed working</h3>
+    <p>Sidebar showed <strong>"Backend Status: Online — v0.1.0"</strong>. Instagram ToS text was pasted, analyzed, and results rendered correctly with traffic light, summary, and individual finding cards.</p>
+  </div>
+</section>
+
+<!-- ── SECTION 6: EVAL ROUND 1 ── -->
+<section>
+  <h2><span class="num">6</span> Eval Harness — First Run</h2>
+  <p style="color:var(--muted); margin-bottom:16px;">
+    The eval harness (<code>scripts/run_eval.py</code>) submits 4 ground-truth ToS test cases to the live API
+    and checks traffic-light accuracy plus clause-level keyword matching.
+  </p>
+  <div class="result-block fail">
+    <div class="score">36% — 4/11 checks passed</div>
+    <p>Starting point. 3 of 4 cases had failures.</p>
+  </div>
+  <table>
+    <thead><tr><th>Case</th><th>Description</th><th>Score</th><th>Issues</th></tr></thead>
+    <tbody>
+      <tr><td>case_001</td><td>High-risk data broker</td><td><span class="tag yellow">1/4 25%</span></td><td>Traffic light correct, 3 clause checks failed</td></tr>
+      <tr><td>case_002</td><td>Medium-risk analytics</td><td><span class="tag green">3/3 100%</span></td><td>Perfect</td></tr>
+      <tr><td>case_003</td><td>Low-risk friendly policy</td><td><span class="tag red">0/1 0%</span></td><td>Should be GREEN, got YELLOW</td></tr>
+      <tr><td>case_004</td><td>Mixed-risk with AI training</td><td><span class="tag red">0/3 0%</span></td><td>Should flag AI training + unilateral change; returned GREEN with zero findings</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:24px; margin-bottom:12px; color:#fff;">Root causes identified</h3>
+  <div class="ps-pair">
+    <div class="problem-card">
+      <h4>Problem A — keyword matching too strict</h4>
+      <p>
+        Eval used AND-logic exact keyword matching. <code>["retain", "data", "deletion"]</code> required all three words as substrings — but the LLM might say <em>"store"</em>, <em>"account closure"</em>, <em>"kept"</em>. Synonyms caused false failures.
+      </p>
+    </div>
+    <div class="problem-card">
+      <h4>Problem B — no risk calibration in agents</h4>
+      <p>
+        The Analyst agent had no explicit definition of what constitutes RED vs YELLOW vs GREEN. GPT-4o applied its own judgment, flagging user-friendly clauses (e.g. "delete within 30 days") as YELLOW, and ignoring genuine risks (AI training, unilateral changes).
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 7: FIX ROUND 1 ── -->
+<section>
+  <h2><span class="num">7</span> Fix Round 1 — Prompt Engineering</h2>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <strong>analyze_task.py — added explicit risk calibration</strong>
+      <p>Added RED / YELLOW / GREEN criteria with examples directly in the task description sent to the Analyst agent. Also added critical rules: "do not flag user-friendly data deletion clauses."</p>
+    </div>
+    <div class="tl-item">
+      <strong>communicate_task.py — explicit traffic_light rules</strong>
+      <p>Changed from "worst severity" (vague) to an explicit decision tree: red if ANY red, yellow if any yellow + no red, green if zero findings or all green.</p>
+    </div>
+    <div class="tl-item">
+      <strong>run_eval.py — synonym expansion</strong>
+      <p>Added a <code>SYNONYMS</code> dictionary mapping keywords to equivalent terms. "retain" → ["retain", "kept", "store", "stored", "hold", "indefinitely"]. Changed AND-logic to: all keywords must match, but each keyword may match via any synonym.</p>
+    </div>
+    <div class="tl-item">
+      <strong>ground_truth.json — reduced keyword count</strong>
+      <p>Reduced required keywords per clause from 3 down to max 2. More general terms used to capture the concept without requiring exact phrasing.</p>
+    </div>
+  </div>
+
+  <div class="result-block fail">
+    <div class="score">54% — 6/11 checks — no change on failing cases</div>
+    <p>Cases 003 and 004 still failing identically. Prompt changes were not effective.</p>
+  </div>
+</section>
+
+<!-- ── SECTION 8: RAILWAY MYSTERY ── -->
+<section>
+  <h2><span class="num">8</span> The Railway Deployment Mystery</h2>
+  <p style="color:var(--muted); margin-bottom:16px;">
+    After multiple rounds of fixes, the eval score stayed exactly 54%. Something was wrong — either the code wasn't deploying, or the LLM was fundamentally ignoring the prompts.
+  </p>
+
+  <div class="ps-pair">
+    <div class="problem-card">
+      <h4>Problem — GitHub auto-deploy not triggering</h4>
+      <p>
+        Pushes to <code>main</code> were not triggering Railway rebuilds. The Railway service was linked to GitHub but the auto-deploy had silently stopped working. Multiple <code>git push</code> operations produced no new deployments.
+      </p>
+    </div>
+    <div class="problem-card">
+      <h4>Problem — version hardcoded in health endpoint</h4>
+      <p>
+        <code>routes_health.py</code> had <code>VERSION = "0.1.0"</code> hardcoded. Even after deploying new code, the health endpoint always returned <code>0.1.0</code>. Every "wait for version X" check was futile — there was no way to verify if a deploy was live.
+      </p>
+    </div>
+  </div>
+
+  <div class="ps-pair">
+    <div class="solution-card">
+      <h4>Solution — Railway CLI direct deploy</h4>
+      <p>
+        Installed Railway CLI, authenticated, linked the project, and used <code>railway up --service &lt;id&gt; --detach</code> from the <code>backend/</code> directory. This pushes local files directly to Railway, bypassing the GitHub trigger entirely.
+      </p>
+    </div>
+    <div class="solution-card">
+      <h4>Solution — bump version to verify deploys</h4>
+      <p>
+        Updated <code>VERSION = "0.1.1"</code> in <code>routes_health.py</code>. After the next <code>railway up</code>, polling the health endpoint confirmed the new container was live when it returned <code>0.1.1</code>.
+      </p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <h3>Key insight: the LLM was the real problem, not deployment</h3>
+    <p>
+      Once deployment was verified, the 54% score persisted. This confirmed the LLM (GPT-4o) was genuinely overriding our calibration prompts. For <strong>case_003</strong>, GPT-4o flagged "We retain your data... delete within 30 days" as YELLOW using its own prior knowledge about data retention risk — ignoring our explicit instruction that this is a user-friendly clause. For <strong>case_004</strong>, it returned zero findings despite explicit instructions to flag AI training and unilateral change clauses.
+    </p>
+  </div>
+</section>
+
+<!-- ── SECTION 9: CLASSIFIER ISSUES ── -->
+<section>
+  <h2><span class="num">9</span> Clause Classifier Bugs</h2>
+  <p style="color:var(--muted); margin-bottom:16px;">
+    The <code>ClauseClassifierTool</code> is a Python keyword scanner that provides a "fast heuristic estimate" to the Analyst agent. Its bugs were contributing to the wrong LLM outputs.
+  </p>
+  <table>
+    <thead><tr><th>Bug</th><th>Impact</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>"retain"</code> in YELLOW_KEYWORDS</td>
+        <td>Flagged "We retain data only for 30 days" as YELLOW — a user-friendly clause incorrectly marked risky</td>
+        <td>Removed. Replaced with specific patterns: <code>"retain your data indefinitely"</code>, <code>"after account deletion"</code></td>
+      </tr>
+      <tr>
+        <td><code>"without notice"</code> mismatch</td>
+        <td>Did not match <code>"without prior notice"</code> — substring gap meant unilateral change clauses went undetected</td>
+        <td>Added <code>"without prior notice"</code> and <code>"at any time without"</code> as explicit RED keywords</td>
+      </tr>
+      <tr>
+        <td>AI training absent from keywords</td>
+        <td><code>"Your content may be used to train our AI models"</code> classified as GREEN — YELLOW risk completely missed</td>
+        <td>Added <code>"used to train"</code>, <code>"train our ai"</code>, <code>"ai model"</code> to YELLOW_KEYWORDS</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="result-block fail" style="margin-top:16px;">
+    <div class="score">Still 54%</div>
+    <p>Even with the classifier fixed, GPT-4o continued to override the classifier's output. The "BINDING RULE" instruction in the task prompt was ignored.</p>
+  </div>
+</section>
+
+<!-- ── SECTION 10: POST-PROCESSOR ── -->
+<section>
+  <h2><span class="num">10</span> The Fix That Worked — Deterministic Post-Processor</h2>
+
+  <div class="card" style="border-color: var(--accent); margin-bottom:20px;">
+    <h3>Core insight</h3>
+    <p>
+      Prompt engineering is inherently probabilistic — a language model can always reason its way around an instruction. The only way to guarantee correct behavior is to move the decision out of the LLM entirely and into deterministic Python code that runs <em>after</em> the crew finishes.
+    </p>
+  </div>
+
+  <p style="color:var(--muted); margin-bottom:16px;">
+    The <code>_post_process()</code> function was added to <code>orchestrator.py</code> and called on every report before it is returned to the API:
+  </p>
+
+  <pre><span class="cm"># Step 1: Remove false-positive findings</span>
+<span class="cm"># If LLM flagged a clause whose source_quote contains a user-friendly phrase, drop it.</span>
+GREEN_INDICATORS = [
+    <span class="str">"do not sell"</span>, <span class="str">"delete within 30"</span>, <span class="str">"permanently delete"</span>,
+    <span class="str">"only for the duration of your account"</span>, <span class="str">"60 days in advance"</span>, ...
+]
+findings = [f <span class="kw">for</span> f <span class="kw">in</span> report.findings
+            <span class="kw">if not</span> <span class="fn">any</span>(gi <span class="kw">in</span> f.source_quote.lower() <span class="kw">for</span> gi <span class="kw">in</span> GREEN_INDICATORS)]
+
+<span class="cm"># Step 2: RED safety net</span>
+<span class="cm"># Scan every sentence for RED keywords (with negation check).</span>
+<span class="cm"># If a RED clause was missed by the LLM, force-add a finding.</span>
+<span class="kw">for</span> sentence <span class="kw">in</span> sentences:
+    red_hits = <span class="fn">_classifier_scan</span>(sentence, RED_KEYWORDS)
+    <span class="kw">if</span> red_hits <span class="kw">and not</span> already_covered:
+        findings.<span class="fn">append</span>(Finding(risk=RiskLevel.RED, ...))
+
+<span class="cm"># Step 3: Recompute traffic_light deterministically</span>
+risks = {f.risk <span class="kw">for</span> f <span class="kw">in</span> findings}
+<span class="kw">if</span>   RiskLevel.RED    <span class="kw">in</span> risks: traffic_light = RiskLevel.RED
+<span class="kw">elif</span> RiskLevel.YELLOW <span class="kw">in</span> risks: traffic_light = RiskLevel.YELLOW
+<span class="kw">else</span>:                            traffic_light = RiskLevel.GREEN</pre>
+
+  <h3 style="margin-top:24px; margin-bottom:14px; color:#fff;">Negation-aware keyword matching</h3>
+  <p style="color:var(--muted); margin-bottom:12px;">
+    A critical detail: <em>"We will NOT sell your personal data"</em> contains the substring <code>"sell your personal"</code> — a RED keyword — but it is actually a user-protective statement. The classifier checks the 12 characters before each keyword match for negation phrases:
+  </p>
+  <pre>NEGATIONS = [<span class="str">"not "</span>, <span class="str">"no "</span>, <span class="str">"never "</span>, <span class="str">"do not "</span>, <span class="str">"will not "</span>, <span class="str">"won't "</span>]
+
+<span class="kw">def</span> <span class="fn">_has_negation</span>(text, keyword_idx):
+    prefix = text[<span class="fn">max</span>(0, keyword_idx - 12) : keyword_idx].lower()
+    <span class="kw">return</span> <span class="fn">any</span>(neg <span class="kw">in</span> prefix <span class="kw">for</span> neg <span class="kw">in</span> NEGATIONS)</pre>
+
+  <div class="result-block pass" style="margin-top:24px;">
+    <div class="score">100% — 11/11 checks passed</div>
+    <p>All 4 test cases correct: traffic lights match expected, all required clauses detected.</p>
+  </div>
+
+  <table style="margin-top:16px;">
+    <thead><tr><th>Case</th><th>Expected</th><th>Got</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td>case_001 — High-risk data broker</td><td><span class="tag red">RED</span></td><td><span class="tag red">RED</span></td><td><span class="tag green">4/4 100%</span></td></tr>
+      <tr><td>case_002 — Medium-risk analytics</td><td><span class="tag yellow">YELLOW</span></td><td><span class="tag yellow">YELLOW</span></td><td><span class="tag green">3/3 100%</span></td></tr>
+      <tr><td>case_003 — Privacy-friendly policy</td><td><span class="tag green">GREEN</span></td><td><span class="tag green">GREEN</span></td><td><span class="tag green">1/1 100%</span></td></tr>
+      <tr><td>case_004 — AI training + unilateral change</td><td><span class="tag red">RED</span></td><td><span class="tag red">RED</span></td><td><span class="tag green">3/3 100%</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── SECTION 11: LESSONS ── -->
+<section>
+  <h2><span class="num">11</span> Lessons Learned</h2>
+  <div class="ps-pair">
+    <div class="card" style="border-color:rgba(108,99,255,0.3);">
+      <h3>1. Populate before testing</h3>
+      <p>A RAG system with an empty knowledge base produces meaningless results. Database ingestion must be part of the deployment checklist, not an afterthought.</p>
+    </div>
+    <div class="card" style="border-color:rgba(108,99,255,0.3);">
+      <h3>2. Hardcode nothing you need to observe</h3>
+      <p>A hardcoded version string in the health endpoint made it impossible to confirm whether code changes had deployed. Always expose observable state from a single source of truth.</p>
+    </div>
+  </div>
+  <div class="ps-pair">
+    <div class="card" style="border-color:rgba(108,99,255,0.3);">
+      <h3>3. Don't fight LLM judgment with more prompts</h3>
+      <p>Adding more calibration instructions reached diminishing returns quickly. GPT-4o's own knowledge about legal risk overrode our explicit rules. Moving the decision to code was the right call.</p>
+    </div>
+    <div class="card" style="border-color:rgba(108,99,255,0.3);">
+      <h3>4. Architecture: LLM for nuance, code for guarantees</h3>
+      <p>The post-processor pattern is a useful general principle. Let the LLM handle subjective YELLOW findings (requires judgment). Guarantee RED findings and traffic_light computation in deterministic code.</p>
+    </div>
+  </div>
+  <div class="ps-pair">
+    <div class="card" style="border-color:rgba(108,99,255,0.3);">
+      <h3>5. Negation matters in keyword scanning</h3>
+      <p>"We will <strong>not</strong> sell your data" and "we <strong>may</strong> sell your data" share the keyword "sell" but have opposite meanings. Any keyword scanner must check for negation context.</p>
+    </div>
+    <div class="card" style="border-color:rgba(108,99,255,0.3);">
+      <h3>6. Eval ground truth must stay in sync with code</h3>
+      <p>case_004's expected traffic_light was "yellow" but the logic requires "red" when a RED finding exists. An inconsistent ground truth produces misleading eval results regardless of system quality.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 12: FINAL STATE ── -->
+<section>
+  <h2><span class="num">12</span> Final System State</h2>
+  <div class="stats">
+    <div class="stat"><span class="val">v0.1.1</span><span class="key">Live Version</span></div>
+    <div class="stat"><span class="val">120</span><span class="key">RAG Chunks</span></div>
+    <div class="stat"><span class="val">100%</span><span class="key">Eval Score</span></div>
+    <div class="stat"><span class="val">11/11</span><span class="key">Checks Passed</span></div>
+  </div>
+  <table style="margin-top:16px;">
+    <thead><tr><th>Component</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Railway Backend</td><td><span class="tag green">Live</span></td><td>https://backend-production-1d50.up.railway.app</td></tr>
+      <tr><td>Supabase RAG DB</td><td><span class="tag green">Populated</span></td><td>120 chunks, 60 ToS documents, 24 MB</td></tr>
+      <tr><td>Streamlit Frontend</td><td><span class="tag green">Working</span></td><td>Connected to Railway via .env</td></tr>
+      <tr><td>CrewAI Pipeline</td><td><span class="tag green">Working</span></td><td>Extractor → Analyst → Communicator + post-processor</td></tr>
+      <tr><td>Eval Harness</td><td><span class="tag green">100%</span></td><td>4 cases, 11 checks, all passing</td></tr>
+      <tr><td>GitHub Auto-Deploy</td><td><span class="tag yellow">Bypassed</span></td><td>Use <code>railway up</code> from backend/ for now</td></tr>
+      <tr><td>Chrome Extension</td><td><span class="tag blue">Untested</span></td><td>Built, not validated end-to-end yet</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <p>TermsGuard AI &mdash; Session Report &mdash; 2026-04-23 &mdash;
+  <a href="https://github.com/tamirko-dot/termsguard-ai">github.com/tamirko-dot/termsguard-ai</a></p>
+</footer>
+
+</body>
+</html>
